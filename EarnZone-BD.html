@@ -8,9 +8,9 @@
   @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
 
   :root {
-    --bg: #080b10; --surface: #0f1419; --card: #141c26; --border: #1e2d3d;
-    --accent: #00d4aa; --accent2: #0099ff; --gold: #f5c518;
-    --green: #22c55e; --red: #ef4444; --text: #e8f4f0; --muted: #6b8a7a; --tag-bg: #0d2018;
+    --bg: #071a0b; --surface: #0a2010; --card: #0d2914; --border: #1a4a24;
+    --accent: #00e676; --accent2: #00c853; --gold: #ffd600;
+    --green: #00e676; --red: #ff1744; --text: #e8f5e9; --muted: #4caf50; --tag-bg: #0a2010;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--bg); color:var(--text); font-family:'Hind Siliguri','Inter',sans-serif; min-height:100vh; }
@@ -50,44 +50,56 @@
   .section-title::after { content:''; flex:1; height:1px; background:var(--border); }
   .section-title .count { font-size:11px; background:var(--tag-bg); color:var(--accent); padding:2px 8px; border-radius:10px; font-weight:600; }
 
-  /* FEATURED */
-  .featured-scroll { display:flex; gap:12px; overflow-x:auto; padding-bottom:6px; scrollbar-width:none; }
+  /* FEATURED — ছবির মতো ডিজাইন */
+  .featured-scroll { display:flex; gap:10px; overflow-x:auto; padding-bottom:8px; scrollbar-width:none; -webkit-overflow-scrolling:touch; }
   .featured-scroll::-webkit-scrollbar { display:none; }
-  .feat-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:16px 14px; min-width:155px; display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; cursor:pointer; transition:all .2s; position:relative; }
-  .feat-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 8px 24px rgba(0,212,170,.1); }
-  .feat-card .hot-badge { position:absolute; top:-6px; right:10px; background:var(--red); color:#fff; font-size:10px; font-weight:700; padding:2px 7px; border-radius:8px; }
-  .feat-icon { width:60px; height:60px; border-radius:15px; display:flex; align-items:center; justify-content:center; font-size:28px; }
-  .feat-name { font-size:13px; font-weight:700; }
-  .feat-earn { font-size:12px; color:var(--accent); font-weight:600; }
-  .feat-cat { font-size:11px; color:var(--muted); }
-  .feat-dl { background:var(--accent); color:#000; border:none; padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; width:100%; transition:opacity .18s; }
+  .feat-card { background:var(--card); border:1px solid var(--border); border-radius:18px; padding:14px 10px 12px; min-width:130px; max-width:130px; display:flex; flex-direction:column; align-items:center; gap:7px; text-align:center; cursor:pointer; transition:all .2s; position:relative; }
+  .feat-card:hover { border-color:var(--accent); transform:translateY(-3px); box-shadow:0 8px 24px rgba(0,230,118,.2); }
+  .feat-card .hot-badge { position:absolute; top:-8px; left:8px; background:var(--red); color:#fff; font-size:9px; font-weight:700; padding:3px 8px; border-radius:8px; letter-spacing:.5px; }
+  .feat-icon { width:72px; height:72px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:32px; overflow:hidden; border:2px solid rgba(255,255,255,.07); }
+  .feat-name { font-size:12px; font-weight:700; color:var(--text); line-height:1.3; }
+  .feat-earn { font-size:12px; color:var(--accent); font-weight:700; }
+  .feat-cat { font-size:10px; color:var(--muted); }
+  .feat-dl { background:var(--accent); color:#000; border:none; padding:7px 10px; border-radius:20px; font-size:11px; font-weight:700; font-family:inherit; cursor:pointer; width:100%; transition:opacity .18s; margin-top:2px; }
   .feat-dl:hover { opacity:.85; }
 
-  /* APP GRID */
-  .app-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(270px,1fr)); gap:12px; }
-  .app-card { background:var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; display:flex; flex-direction:column; gap:10px; cursor:pointer; transition:all .2s; position:relative; }
-  .app-card:hover { border-color:var(--accent); transform:translateY(-2px); box-shadow:0 6px 20px rgba(0,212,170,.08); }
-  .new-badge { position:absolute; top:12px; right:12px; background:var(--gold); color:#000; font-size:10px; font-weight:700; padding:2px 7px; border-radius:8px; }
+  /* SECTION HEADER — View All বাটন */
+  .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; }
+  .section-header .section-title { margin-bottom:0; }
+  .section-header .section-title::after { display:none; }
+  .view-all-btn { background:rgba(0,212,170,.1); border:1px solid rgba(0,212,170,.3); color:var(--accent); padding:5px 12px; border-radius:12px; font-size:11px; font-weight:700; font-family:inherit; cursor:pointer; white-space:nowrap; }
+
+  /* APP LIST — ছবির মতো লিস্ট স্টাইল */
+  .app-grid { display:flex; flex-direction:column; gap:10px; }
+  .app-card { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:14px; display:flex; align-items:center; gap:12px; cursor:pointer; transition:all .2s; position:relative; }
+  .app-card:hover { border-color:var(--accent); box-shadow:0 4px 16px rgba(0,212,170,.1); }
+  .new-badge { position:absolute; top:12px; right:12px; background:var(--gold); color:#000; font-size:10px; font-weight:700; padding:3px 9px; border-radius:8px; }
   .update-badge { position:absolute; top:12px; left:12px; background:linear-gradient(135deg,#0099ff,#00d4aa); color:#000; font-size:10px; font-weight:700; padding:3px 9px; border-radius:8px; cursor:pointer; display:flex; align-items:center; gap:4px; z-index:5; transition:opacity .18s; box-shadow:0 2px 8px rgba(0,153,255,.35); text-decoration:none; }
   .update-badge:hover { opacity:.85; }
   .update-badge::before { content:'🔄'; font-size:10px; }
   .pending-badge { position:absolute; top:12px; left:12px; background:rgba(245,197,24,.15); border:1px solid var(--gold); color:var(--gold); font-size:10px; font-weight:700; padding:2px 7px; border-radius:8px; }
-  .app-top { display:flex; align-items:flex-start; gap:12px; }
-  .app-icon { width:54px; height:54px; border-radius:13px; display:flex; align-items:center; justify-content:center; font-size:26px; flex-shrink:0; }
-  .app-meta { flex:1; min-width:0; }
-  .app-name { font-size:14px; font-weight:700; margin-bottom:2px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
-  .app-dev { font-size:11px; color:var(--muted); margin-bottom:5px; }
-  .app-rating { display:flex; align-items:center; gap:4px; font-size:12px; color:var(--gold); }
-  .app-rating span { color:var(--muted); }
-  .earn-info { background:rgba(0,212,170,.07); border:1px solid rgba(0,212,170,.15); border-radius:8px; padding:7px 10px; display:flex; justify-content:space-between; align-items:center; }
-  .earn-label { font-size:11px; color:var(--muted); }
-  .earn-amount { font-size:13px; font-weight:700; color:var(--accent); }
-  .app-desc { font-size:12px; color:var(--muted); line-height:1.5; display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden; }
-  .app-footer { display:flex; align-items:center; justify-content:space-between; gap:8px; }
-  .app-tags { display:flex; gap:5px; flex-wrap:wrap; }
-  .tag { background:var(--tag-bg); color:var(--accent); font-size:10px; padding:3px 8px; border-radius:12px; font-weight:600; border:1px solid rgba(0,212,170,.15); }
-  .dl-btn { background:linear-gradient(135deg,var(--accent),var(--accent2)); color:#000; border:none; padding:8px 16px; border-radius:20px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; white-space:nowrap; transition:all .18s; text-decoration:none; display:inline-flex; align-items:center; gap:4px; }
-  .dl-btn:hover { opacity:.85; transform:scale(1.04); }
+  /* আইকন */
+  .app-icon { width:64px; height:64px; border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:28px; flex-shrink:0; overflow:hidden; border:1.5px solid rgba(255,255,255,.07); }
+  /* মাঝের তথ্য */
+  .app-mid { flex:1; min-width:0; display:flex; flex-direction:column; gap:3px; }
+  .app-name { font-size:15px; font-weight:700; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .app-earn-line { font-size:13px; color:var(--accent); font-weight:700; }
+  .app-bonus-line { font-size:11px; color:var(--muted); }
+  /* ডান দিকের বাটন */
+  .app-right { display:flex; flex-direction:column; align-items:flex-end; gap:6px; flex-shrink:0; }
+  .dl-btn { background:var(--accent); color:#000; border:none; padding:9px 16px; border-radius:20px; font-size:12px; font-weight:700; font-family:inherit; cursor:pointer; white-space:nowrap; transition:all .18s; text-decoration:none; display:inline-flex; align-items:center; gap:4px; }
+  .dl-btn:hover { opacity:.85; }
+  /* পুরনো ক্লাস যেন কাজ করে */
+  .app-top { display:none; }
+  .app-meta { display:none; }
+  .earn-info { display:none; }
+  .app-desc { display:none; }
+  .app-footer { display:none; }
+  .app-dev { display:none; }
+  .app-rating { display:none; }
+  .app-tags { display:none; }
+  .tag { display:none; }
+  .star-rating-row { display:none; }
 
   /* VIEW MODAL */
   .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.8); z-index:200; align-items:flex-end; justify-content:center; overscroll-behavior:contain; }
@@ -131,8 +143,15 @@
 
   /* ===== MOBILE OPTIMIZED ===== */
   @media(max-width:600px) {
-    /* app grid - single column on mobile */
-    .app-grid { grid-template-columns:1fr; gap:10px; }
+    /* app list - mobile */
+    .app-grid { gap:9px; }
+    .app-card { padding:12px 11px; border-radius:14px; }
+    .app-icon { width:58px; height:58px; border-radius:14px; font-size:26px; }
+    .app-name { font-size:14px; }
+    .app-earn-line { font-size:12px; }
+    .dl-btn { padding:9px 14px; font-size:12px; }
+    .feat-card { min-width:118px; max-width:118px; }
+    .feat-icon { width:64px; height:64px; }
 
     /* header compact */
     header { padding:0 10px; }
@@ -283,6 +302,12 @@
   .banner-prev { left:8px; }
   .banner-next { right:8px; }
   .banner-prev:hover, .banner-next:hover { background:rgba(0,212,170,.8); }
+
+  /* APP AD SECTION */
+  .modal-ad-section { margin-bottom:14px; }
+  .modal-ad-label { font-size:11px; color:var(--muted); text-align:center; margin-bottom:6px; letter-spacing:.3px; }
+  .modal-ad-box { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:10px; overflow:hidden; display:flex; align-items:center; justify-content:center; min-height:60px; }
+  .modal-ad-box iframe { max-width:100% !important; border:none !important; }
 
   /* STAR RATING */
   .star-rating-row{display:flex;align-items:center;gap:6px;margin-top:6px;}
@@ -516,7 +541,10 @@
 </div>
 
 <div class="section">
-  <div class="section-title">🔥 হট অ্যাপস <span class="count" id="featCount">0</span></div>
+  <div class="section-header">
+    <div class="section-title">⭐ সেরা ফিচারড অ্যাপস <span class="count" id="featCount">0</span></div>
+    <button class="view-all-btn" onclick="filterCat('all',document.querySelector('.cat-btn'))">View All</button>
+  </div>
   <div class="featured-scroll" id="featuredRow"><div class="loading-spinner"><div class="spinner"></div>লোড হচ্ছে...</div></div>
 </div>
 
@@ -535,7 +563,7 @@
 </div>
 
 <div class="section">
-  <div class="section-title" id="gridTitle">📱 সব অ্যাপস <span class="count" id="gridCount">0</span></div>
+  <div class="section-title" id="gridTitle">📱 শেষ অ্যাপস <span class="count" id="gridCount">0</span></div>
   <div class="app-grid" id="appGrid"><div class="loading-spinner" style="grid-column:1/-1"><div class="spinner"></div>লোড হচ্ছে...</div></div>
 </div>
 
@@ -627,6 +655,12 @@
       <div class="comment-list" id="commentList">
         <div style="text-align:center;color:var(--muted);font-size:12px;padding:10px;">কোনো মন্তব্য নেই। প্রথম মন্তব্য করুন!</div>
       </div>
+    </div>
+
+    <!-- App Ad Section (per-app Adsterra/Monetag) -->
+    <div class="modal-ad-section" id="mAdSection" style="display:none">
+      <div class="modal-ad-label">📢 বিজ্ঞাপন</div>
+      <div class="modal-ad-box" id="mAdBox"></div>
     </div>
 
     <!-- Sticky download footer -->
@@ -919,14 +953,13 @@ function renderFeatured(list) {
   if (!feat.length) { row.innerHTML = '<p style="color:var(--muted);font-size:13px;padding:10px">কোনো ফিচার্ড অ্যাপ নেই</p>'; return; }
   row.innerHTML = feat.map(a => `
     <div class="feat-card" onclick="openModal('${a.docId}')">
-      ${a.isNew?'<span class="hot-badge">NEW</span>':''}
-      <div class="feat-icon" style="background:${a.iconBg||'var(--card)'};overflow:hidden;padding:0;">
-        ${a.iconUrl?`<img src="${a.iconUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:15px;" alt="logo">`:(a.icon||'📱')}
+      ${a.isNew?'<span class="hot-badge">HOT</span>':''}
+      <div class="feat-icon" style="background:${a.iconBg||'#1a2a1a'};overflow:hidden;padding:0;">
+        ${a.iconUrl?`<img src="${a.iconUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:18px;" alt="logo">`:(a.icon||'📱')}
       </div>
       <div class="feat-name">${a.name}</div>
-      <div class="feat-earn">${a.earn}/দিন</div>
-      <div class="feat-cat">${catLabel(a.cat)}</div>
-      <button class="feat-dl" onclick="event.stopPropagation();dlClick('${a.docId}')">⬇️ ডাউনলোড</button>
+      <div class="feat-earn">৳${a.earn}/দিন</div>
+      <button class="feat-dl" onclick="event.stopPropagation();dlClick('${a.docId}')">ডাউনলোড</button>
     </div>`).join('');
 }
 
@@ -940,40 +973,36 @@ function renderGrid(list) {
       : `<div class="empty"><div class="emoji">🔍</div><p>কোনো অ্যাপ পাওয়া যায়নি</p></div>`;
     return;
   }
-  grid.innerHTML = list.map(a => {
+  const adCode300 = `<div style="text-align:center;padding:10px 0;"><div style="font-size:10px;color:var(--muted);margin-bottom:5px;">📢 বিজ্ঞাপন</div><ins class="adsbygoogle" style="display:inline-block;width:300px;height:250px" data-ad-slot="adsterra-300"></ins><script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"><\/script></div>`;
+  let html = '';
+  list.forEach((a, idx) => {
     const isUpdated = a.dl && !a.isNew;
-    return `
+    const bonus = a.bonus ? `সাইন আপ বোনাস ৳${a.bonus}` : (a.desc ? a.desc.substring(0,40)+'…' : '');
+    html += `
     <div class="app-card" onclick="openModal('${a.docId}')">
-      ${a.isNew?'<span class="new-badge">🆕 নতুন</span>':''}
-      ${isUpdated?`<a class="update-badge" href="${a.dl}" target="_blank" rel="noopener" onclick="event.stopPropagation();dlClick('${a.docId}')">আপডেট</a>`:''}
-      <div class="app-top">
-        <div class="app-icon" style="background:${a.iconBg||'var(--card)'};overflow:hidden;padding:0;">
-          ${a.iconUrl?`<img src="${a.iconUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:13px;" alt="logo">`:(a.icon||'📱')}
-        </div>
-        <div class="app-meta">
-          <div class="app-name">${a.name}</div>
-          <div class="app-dev">${a.dev}</div>
-          <div class="app-rating">${starStr(a.rating)} <span>${a.rating}</span></div>
-        </div>
+      ${a.isNew?'<span class="new-badge">NEW</span>':''}
+      <div class="app-icon" style="background:${a.iconBg||'#1a2a1a'};overflow:hidden;padding:0;">
+        ${a.iconUrl?`<img src="${a.iconUrl}" style="width:100%;height:100%;object-fit:cover;border-radius:16px;" alt="logo">`:(a.icon||'📱')}
       </div>
-      <div class="earn-info"><span class="earn-label">💰 সম্ভাব্য আয়</span><span class="earn-amount">${a.earn}/দিন</span></div>
-      <div class="app-desc">${a.desc}</div>
-      <div class="app-footer">
-        <div>
-          <div class="app-tags">
-            <span class="tag">${catLabel(a.cat)}</span>
-            <span class="tag" style="background:rgba(0,153,255,.1);border-color:rgba(0,153,255,.2);color:var(--accent2);">⬇️ ${(a.downloadCount||0)>=1000?((a.downloadCount||0)/1000).toFixed(1)+'K':(a.downloadCount||0)}+</span>
-          </div>
-          <div class="star-rating-row">
-            <span class="star-avg">${a.starCount&&a.starTotal?(a.starTotal/a.starCount).toFixed(1):'—'}</span>
-            <span style="color:var(--gold);font-size:12px;">${starStr(a.starCount&&a.starTotal?Math.round(a.starTotal/a.starCount):0)}</span>
-            <span class="star-count">(${a.starCount||0})</span>
-          </div>
-        </div>
-        <a class="dl-btn" href="${a.dl||'#'}" target="_blank" rel="noopener" onclick="event.stopPropagation();dlClick('${a.docId}')">⬇️ ডাউনলোড</a>
+      <div class="app-mid">
+        <div class="app-name">${a.name}</div>
+        <div class="app-earn-line">৳${a.earn}/দিন</div>
+        ${bonus?`<div class="app-bonus-line">${bonus}</div>`:''}
+      </div>
+      <div class="app-right">
+        ${isUpdated?`<a class="update-badge" href="${a.dl}" target="_blank" rel="noopener" onclick="event.stopPropagation();dlClick('${a.docId}')" style="position:static;margin-bottom:4px;">আপডেট</a>`:''}
+        <a class="dl-btn" href="${a.dl||'#'}" target="_blank" rel="noopener" onclick="event.stopPropagation();dlClick('${a.docId}')">ডাউনলোড</a>
       </div>
     </div>`;
-  }).join('');
+    // প্রতি ৩টি অ্যাপের পরে Adsterra 300x250 অ্যাড
+    if ((idx + 1) % 3 === 0) {
+      html += `<div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:12px;text-align:center;">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">📢 বিজ্ঞাপন</div>
+        <script>atOptions={'key':'08ac771a59f6a5127f27a5923c3469cc','format':'iframe','height':250,'width':300,'params':{}};document.write('<sc'+'ript src="https://www.highperformanceformat.com/08ac771a59f6a5127f27a5923c3469cc/invoke.js"></sc'+'ript>');<\/script>
+      </div>`;
+    }
+  });
+  grid.innerHTML = html;
 }
 
 function getFiltered() {
@@ -1065,6 +1094,40 @@ window.openModal = function(docId) {
   const dlCount = a.downloadCount||0;
   document.getElementById('mDls').textContent = dlCount >= 1000 ? (dlCount/1000).toFixed(1)+'K+' : dlCount+'+';
   document.getElementById('mDlBtn').href = a.dl;
+
+  // Per-app Ad Code (Adsterra/Monetag script/iframe)
+  const adSection = document.getElementById('mAdSection');
+  const adBox = document.getElementById('mAdBox');
+  if (a.adCode && a.adCode.trim()) {
+    adSection.style.display = '';
+    // Clear previous ad
+    adBox.innerHTML = '';
+    // Safely inject ad code: extract scripts and iframes
+    const tempDiv = document.createElement('div');
+    tempDiv.innerHTML = a.adCode;
+    // Append non-script elements first
+    Array.from(tempDiv.childNodes).forEach(node => {
+      if (node.nodeName !== 'SCRIPT') {
+        adBox.appendChild(node.cloneNode(true));
+      }
+    });
+    // Re-create and append script elements so they execute
+    Array.from(tempDiv.querySelectorAll('script')).forEach(oldScript => {
+      const newScript = document.createElement('script');
+      if (oldScript.src) {
+        newScript.src = oldScript.src;
+        newScript.async = true;
+        if (oldScript.getAttribute('data-cfasync') !== null)
+          newScript.setAttribute('data-cfasync', 'false');
+      } else {
+        newScript.textContent = oldScript.textContent;
+      }
+      adBox.appendChild(newScript);
+    });
+  } else {
+    adSection.style.display = 'none';
+    adBox.innerHTML = '';
+  }
 
   // Screenshots
   const ssSec = document.getElementById('mSsSection');
