@@ -634,6 +634,12 @@
       <div class="info-box"><div class="val" id="mDls"></div><div class="lbl">ডাউনলোড</div></div>
     </div>
 
+    <!-- Modal এর ভেতরে অ্যাড -->
+    <div style="text-align:center;margin:14px 0;padding:10px;background:var(--card);border:1px solid var(--border);border-radius:14px;">
+      <div style="font-size:10px;color:var(--muted);margin-bottom:6px;">📢 বিজ্ঞাপন</div>
+      <div id="modalAdContainer"></div>
+    </div>
+
     <!-- Recommended apps -->
     <div style="margin-bottom:14px;">
       <div style="font-size:12px;color:var(--muted);margin-bottom:8px;">📱 আরো অ্যাপস দেখুন</div>
@@ -1094,6 +1100,19 @@ window.openModal = function(docId) {
   const dlCount = a.downloadCount||0;
   document.getElementById('mDls').textContent = dlCount >= 1000 ? (dlCount/1000).toFixed(1)+'K+' : dlCount+'+';
   document.getElementById('mDlBtn').href = a.dl;
+
+  // Modal এর ভেতরে অ্যাড লোড করো
+  const modalAdContainer = document.getElementById('modalAdContainer');
+  if (modalAdContainer) {
+    modalAdContainer.innerHTML = '';
+    const iframe = document.createElement('iframe');
+    iframe.src = 'https://www.highperformanceformat.com/08ac771a59f6a5127f27a5923c3469cc/invoke.js';
+    iframe.width = '300';
+    iframe.height = '250';
+    iframe.frameBorder = '0';
+    iframe.scrolling = 'no';
+    modalAdContainer.innerHTML = `<script>atOptions={'key':'08ac771a59f6a5127f27a5923c3469cc','format':'iframe','height':250,'width':300,'params':{}};document.write('<sc'+'ript src="https://www.highperformanceformat.com/08ac771a59f6a5127f27a5923c3469cc/invoke.js"></sc'+'ript>');<\/script>`;
+  }
 
   // Per-app Ad Code (Adsterra/Monetag script/iframe)
   const adSection = document.getElementById('mAdSection');
