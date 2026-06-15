@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>EarnZone BD — Admin Panel</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap');
+:root{
+  --bg:#060910;--surface:#0c1018;--card:#111820;--border:#1a2535;
+  --accent:#00d4aa;--accent2:#0099ff;--gold:#f5c518;
+  --green:#22c55e;--red:#ef4444;--purple:#a855f7;--orange:#f97316;
+  --text:#e8f4f0;--muted:#5a7a6a;--sw:240px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--bg);color:var(--text);font-family:'Hind Siliguri','Inter',sans-serif;min-height:100vh;}
+
+/* LOGIN */
+#loginScreen{position:fixed;inset:0;background:var(--bg);z-index:9999;display:flex;align-items:center;justify-content:center;padding:20px;}
+.lb{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--red);border-radius:20px;width:100%;max-width:360px;padding:36px 28px;text-align:center;}
+.lb-logo{width:60px;height:60px;background:linear-gradient(135deg,var(--red),#b91c1c);border-radius:14px;display:inline-flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:14px;}
+.lb h1{font-size:21px;font-weight:700;margin-bottom:4px;}
+.lb p{font-size:12px;color:var(--muted);margin-bottom:22px;}
+.lb input{width:100%;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:13px 14px;color:var(--text);font-size:18px;font-family:inherit;outline:none;margin-bottom:12px;letter-spacing:6px;text-align:center;transition:border-color .2s;}
+.lb input:focus{border-color:var(--accent);}
+.lb-btn{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;border:none;padding:13px;border-radius:12px;font-size:14px;font-weight:700;font-family:inherit;cursor:pointer;}
+.lb-err{color:var(--red);font-size:12px;margin-top:8px;min-height:18px;}
+
+/* HEADER */
+#hdr{background:var(--surface);border-bottom:1px solid var(--border);padding:0 18px;display:none;position:sticky;top:0;z-index:100;}
+#hdr.on{display:block;}
+.hi{display:flex;align-items:center;gap:10px;height:56px;}
+.hlogo{display:flex;align-items:center;gap:8px;}
+.hlogo-i{width:34px;height:34px;background:linear-gradient(135deg,var(--red),#7f1d1d);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px;}
+.hlogo-t{font-size:15px;font-weight:700;}.hlogo-t span{color:var(--red);}
+.hdr-r{margin-left:auto;display:flex;align-items:center;gap:8px;}
+.a-badge{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:var(--red);padding:4px 10px;border-radius:16px;font-size:11px;font-weight:700;}
+.lo-btn{background:transparent;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:8px;font-size:12px;font-weight:600;font-family:inherit;cursor:pointer;transition:all .18s;}
+.lo-btn:hover{border-color:var(--red);color:var(--red);}
+
+/* LAYOUT */
+.wrap{display:none;min-height:calc(100vh - 56px);}
+.wrap.on{display:flex;}
+/* SIDEBAR */
+.sb{width:var(--sw);background:var(--surface);border-right:1px solid var(--border);position:sticky;top:56px;height:calc(100vh - 56px);overflow-y:auto;padding:12px 10px;flex-shrink:0;display:flex;flex-direction:column;gap:1px;}
+.sb-sec{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;padding:12px 10px 5px;}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:9px;font-size:13px;font-weight:600;color:var(--muted);cursor:pointer;transition:all .15s;border:1px solid transparent;user-select:none;}
+.ni:hover{background:var(--card);color:var(--text);}
+.ni.on{background:rgba(0,212,170,.1);border-color:rgba(0,212,170,.2);color:var(--accent);}
+.ni .ic{font-size:15px;width:19px;text-align:center;}
+.nbadge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:7px;margin-left:auto;}
+
+/* CONTENT */
+.ct{flex:1;padding:22px;overflow-y:auto;}
+.pg{display:none;}.pg.on{display:block;}
+.ptitle{font-size:18px;font-weight:700;margin-bottom:18px;display:flex;align-items:center;gap:8px;}
+
+/* STATS */
+.srow{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;margin-bottom:20px;}
+.sc{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px 12px;text-align:center;transition:border-color .2s;}
+.sc:hover{border-color:var(--accent);}
+.sc .si{font-size:22px;margin-bottom:6px;}
+.sc .sv{font-size:22px;font-weight:700;color:var(--accent);margin-bottom:2px;}
+.sc .sl{font-size:11px;color:var(--muted);}
+
+/* TABLE */
+.tw{background:var(--card);border:1px solid var(--border);border-radius:12px;overflow:hidden;margin-bottom:18px;}
+.th{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-bottom:1px solid var(--border);}
+.tt{font-size:13px;font-weight:700;}
+.ta{display:flex;gap:8px;align-items:center;}
+.sm{background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:6px 11px;color:var(--text);font-size:12px;font-family:inherit;outline:none;width:170px;transition:border-color .2s;}
+.sm:focus{border-color:var(--accent);}
+table{width:100%;border-collapse:collapse;}
+thead tr{background:var(--bg);}
+th{padding:9px 12px;font-size:11px;font-weight:700;color:var(--muted);text-align:left;text-transform:uppercase;letter-spacing:.4px;border-bottom:1px solid var(--border);}
+td{padding:10px 12px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+tr:hover td{background:rgba(255,255,255,.015);}
+.ac{display:flex;align-items:center;gap:8px;}
+.ath{width:38px;height:38px;border-radius:9px;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:17px;overflow:hidden;flex-shrink:0;background:var(--bg);}
+.ath img{width:100%;height:100%;object-fit:cover;border-radius:8px;}
+.an{font-size:12px;font-weight:700;}.as{font-size:11px;color:var(--muted);margin-top:1px;}
+
+/* BADGES */
+.b{display:inline-flex;align-items:center;padding:3px 8px;border-radius:9px;font-size:11px;font-weight:700;}
+.bg{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.25);color:var(--green);}
+.br{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.25);color:var(--red);}
+.bo{background:rgba(245,197,24,.1);border:1px solid rgba(245,197,24,.25);color:var(--gold);}
+.bb{background:rgba(0,153,255,.1);border:1px solid rgba(0,153,255,.25);color:var(--accent2);}
+.bp{background:rgba(168,85,247,.1);border:1px solid rgba(168,85,247,.25);color:var(--purple);}
+
+/* BUTTONS */
+.btn{border:none;padding:5px 10px;border-radius:7px;font-size:11px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;white-space:nowrap;}
+.btn-a{background:rgba(34,197,94,.1);border:1px solid rgba(34,197,94,.3);color:var(--green);}
+.btn-a:hover{background:var(--green);color:#fff;}
+.btn-r{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red);}
+.btn-r:hover{background:var(--red);color:#fff;}
+.btn-e{background:rgba(0,153,255,.1);border:1px solid rgba(0,153,255,.3);color:var(--accent2);}
+.btn-e:hover{background:var(--accent2);color:#fff;}
+.btn-d{background:rgba(239,68,68,.08);border:1px solid rgba(239,68,68,.2);color:var(--red);}
+.btn-d:hover{background:var(--red);color:#fff;}
+.btn-p{background:linear-gradient(135deg,var(--accent),var(--accent2));color:#000;border:none;padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:opacity .18s;}
+.btn-p:hover{opacity:.85;}
+.btn-g{background:transparent;border:1px solid var(--border);color:var(--muted);padding:10px 18px;border-radius:10px;font-size:13px;font-family:inherit;cursor:pointer;transition:all .18s;margin-top:8px;width:100%;}
+.btn-g:hover{border-color:var(--muted);color:var(--text);}
+.btn-dn{background:rgba(239,68,68,.1);border:1px solid rgba(239,68,68,.3);color:var(--red);padding:10px 18px;border-radius:10px;font-size:13px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .18s;}
+.btn-dn:hover{background:var(--red);color:#fff;}
+.acns{display:flex;gap:5px;flex-wrap:wrap;}
+
+/* OVERLAY */
+.ov{display:none;position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:500;align-items:center;justify-content:center;padding:14px;}
+.ov.open{display:flex;}
+.pn{background:var(--surface);border:1px solid var(--border);border-top:3px solid var(--accent);border-radius:16px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;padding:24px 20px;}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.ph h2{font-size:16px;font-weight:700;color:var(--accent);}
+.cx{background:var(--card);border:1px solid var(--border);color:var(--muted);width:30px;height:30px;border-radius:7px;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .18s;}
+.cx:hover{border-color:var(--red);color:var(--red);}
+
+/* FORMS */
+.fg{display:flex;flex-direction:column;gap:4px;margin-bottom:11px;}
+.fg label{font-size:11px;color:var(--muted);font-weight:600;}
+.fg input,.fg select,.fg textarea{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:10px 12px;color:var(--text);font-size:12px;font-family:inherit;outline:none;width:100%;transition:border-color .2s;}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent);}
+.fg select option{background:var(--card);}
+.fg textarea{resize:vertical;min-height:65px;}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.fe{color:var(--red);font-size:11px;margin-top:5px;display:none;}
+.fok{color:var(--green);font-size:11px;margin-top:5px;display:none;}
+.cbr{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);margin-bottom:9px;}
+.cbr input[type=checkbox]{accent-color:var(--accent);width:15px;height:15px;cursor:pointer;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--green);color:#fff;padding:9px 20px;border-radius:22px;font-size:12px;font-weight:600;z-index:9999;transition:transform .3s;white-space:nowrap;pointer-events:none;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+
+/* LOADING */
+.ldr td{text-align:center;padding:28px;color:var(--muted);}
+.sp{width:22px;height:22px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .7s linear infinite;display:inline-block;vertical-align:middle;margin-right:6px;}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* CARD */
+.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:18px;margin-bottom:14px;}
+.card h3{font-size:13px;font-weight:700;color:var(--accent);margin-bottom:12px;}
+.info-r{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;}
+.info-r:last-child{border-bottom:none;}
+.info-l{color:var(--muted);font-size:11px;}
+
+/* QUICK ACTIONS */
+.qa-grid{display:flex;flex-wrap:wrap;gap:8px;}
+.qa-btn{display:flex;align-items:center;gap:6px;padding:9px 14px;border-radius:9px;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;transition:all .15s;border:1px solid;}
+
+@media(max-width:680px){
+  .sb{display:none;}
+  .ct{padding:12px;}
+  .srow{grid-template-columns:repeat(2,1fr);}
+  table{font-size:11px;}
+  th,td{padding:7px 8px;}
+  .fr{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="loginScreen">
+  <div class="lb">
+    <div class="lb-logo">🛡️</div>
+    <h1>Admin Panel</h1>
+    <p>EarnZone BD — কন্ট্রোল সেন্টার</p>
+    <input type="password" id="ap" placeholder="••••" maxlength="20" onkeydown="if(event.key==='Enter')login()">
+    <button class="lb-btn" onclick="login()">🔓 প্রবেশ করুন</button>
+    <div class="lb-err" id="le"></div>
+  </div>
+</div>
+
+<!-- ══ HEADER ══ -->
+<div id="hdr">
+  <div class="hi">
+    <div class="hlogo"><div class="hlogo-i">🛡️</div><div class="hlogo-t">EarnZone <span>Admin</span></div></div>
+    <div class="hdr-r">
+      <div class="a-badge">🔴 ADMIN</div>
+      <button class="lo-btn" onclick="logout()">🚪 লগআউট</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN LAYOUT ══ -->
+<div class="wrap" id="wrap">
+  <!-- SIDEBAR -->
+  <div class="sb">
+    <div class="sb-sec">ড্যাশবোর্ড</div>
+    <div class="ni on" onclick="go('dash',this)"><span class="ic">📊</span> ড্যাশবোর্ড</div>
+
+    <div class="sb-sec">📱 অ্যাপ কন্ট্রোল</div>
+    <div class="ni" onclick="go('apps',this)"><span class="ic">📋</span> সব অ্যাপ</div>
+    <div class="ni" onclick="go('addapp',this)"><span class="ic">➕</span> নতুন অ্যাপ যোগ</div>
+    <div class="ni" onclick="go('featured',this)"><span class="ic">⭐</span> ফিচার্ড অ্যাপ</div>
+    <div class="ni" onclick="go('pending',this)">
+      <span class="ic">⏳</span> পেন্ডিং অ্যাপ
+      <span class="nbadge" id="nb-pending" style="display:none">0</span>
+    </div>
+
+    <div class="sb-sec">👥 ব্যবহারকারী</div>
+    <div class="ni" onclick="go('devusers',this)"><span class="ic">💻</span> ডেভেলপার</div>
+    <div class="ni" onclick="go('follows',this)"><span class="ic">👥</span> ফলো রেকর্ড</div>
+
+    <div class="sb-sec">💰 আর্থিক</div>
+    <div class="ni" onclick="go('withdraw',this)">
+      <span class="ic">💸</span> উইথড্র
+      <span class="nbadge" id="nb-wd" style="display:none">0</span>
+    </div>
+    <div class="ni" onclick="go('sub',this)">
+      <span class="ic">👑</span> সাবস্ক্রিপশন
+      <span class="nbadge" id="nb-sub" style="display:none">0</span>
+    </div>
+    <div class="ni" onclick="go('mono',this)"><span class="ic">💰</span> মনিটাইজ</div>
+
+    <div class="sb-sec">💬 কমিউনিটি</div>
+    <div class="ni" onclick="go('comments',this)"><span class="ic">💬</span> মন্তব্য</div>
+    <div class="ni" onclick="go('ratings',this)"><span class="ic">⭐</span> রেটিং</div>
+    <div class="ni" onclick="go('notif',this)"><span class="ic">🔔</span> নোটিফিকেশন লগ</div>
+
+    <div class="sb-sec">⚙️ সাইট কন্ট্রোল</div>
+    <div class="ni" onclick="go('siteset',this)"><span class="ic">⚙️</span> সাইট সেটিংস</div>
+    <div class="ni" onclick="go('ticker',this)"><span class="ic">📢</span> টিকার / হিরো</div>
+    <div class="ni" onclick="go('banners',this)"><span class="ic">🖼️</span> ব্যানার স্লাইডার</div>
+    <div class="ni" onclick="go('bulk',this)"><span class="ic">⚡</span> বাল্ক একশন</div>
+    <div class="ni" onclick="go('fblinks',this)"><span class="ic">🔗</span> Firebase লিংক</div>
+  </div>
+
+  <!-- CONTENT -->
+  <div class="ct">
+
+    <!-- ═════════ DASHBOARD ═════════ -->
+    <div class="pg on" id="pg-dash">
+      <div class="ptitle">📊 ড্যাশবোর্ড</div>
+      <div class="srow">
+        <div class="sc"><div class="si">📱</div><div class="sv" id="d-apps">-</div><div class="sl">মোট অ্যাপ</div></div>
+        <div class="sc"><div class="si">💻</div><div class="sv" id="d-devs">-</div><div class="sl">ডেভেলপার</div></div>
+        <div class="sc"><div class="si">⏳</div><div class="sv" id="d-pend" style="color:var(--gold)">-</div><div class="sl">পেন্ডিং অ্যাপ</div></div>
+        <div class="sc"><div class="si">💸</div><div class="sv" id="d-wd" style="color:var(--orange)">-</div><div class="sl">পেন্ডিং উইথড্র</div></div>
+        <div class="sc"><div class="si">👑</div><div class="sv" id="d-sub" style="color:var(--purple)">-</div><div class="sl">পেন্ডিং সাবস্ক্রিপশন</div></div>
+        <div class="sc"><div class="si">⭐</div><div class="sv" id="d-feat" style="color:var(--gold)">-</div><div class="sl">ফিচার্ড অ্যাপ</div></div>
+        <div class="sc"><div class="si">💬</div><div class="sv" id="d-cmts">-</div><div class="sl">মোট মন্তব্য</div></div>
+        <div class="sc"><div class="si">🏆</div><div class="sv" id="d-rats">-</div><div class="sl">মোট রেটিং</div></div>
+      </div>
+      <div class="tw">
+        <div class="th"><div class="tt">🆕 সর্বশেষ অ্যাপ</div></div>
+        <table><thead><tr><th>অ্যাপ</th><th>ডেভেলপার</th><th>ডাউনলোড</th><th>স্ট্যাটাস</th><th>একশন</th></tr></thead>
+        <tbody id="dash-apps"><tr class="ldr"><td colspan="5"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody></table>
+      </div>
+    </div>
+
+    <!-- ═════════ ALL APPS ═════════ -->
+    <div class="pg" id="pg-apps">
+      <div class="ptitle">📋 সব অ্যাপ</div>
+      <div class="tw">
+        <div class="th">
+          <div class="tt">মোট: <span id="cnt-apps">0</span></div>
+          <div class="ta"><input class="sm" type="text" placeholder="🔍 অ্যাপ / ডেভেলপার..." id="s-apps" oninput="rApps()"></div>
+        </div>
+        <table>
+          <thead><tr><th>অ্যাপ</th><th>ক্যাটাগরি</th><th>DL</th><th>রেটিং</th><th>স্টার</th><th>ফিচার্ড</th><th>নতুন</th><th>স্ট্যাটাস</th><th>একশন</th></tr></thead>
+          <tbody id="tbl-apps"><tr class="ldr"><td colspan="9"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ═════════ ADD APP ═════════ -->
+    <div class="pg" id="pg-addapp">
+      <div class="ptitle">➕ নতুন অ্যাপ যোগ করুন</div>
+      <div class="card" style="max-width:620px;">
+        <div class="fr">
+          <div class="fg"><label>অ্যাপের নাম *</label><input type="text" id="na-name" placeholder="যেমন: BkashEarn Pro"></div>
+          <div class="fg"><label>ডেভেলপার নাম</label><input type="text" id="na-dev" placeholder="Developer Name"></div>
+        </div>
+        <div class="fg"><label>বিবরণ *</label><textarea id="na-desc" placeholder="অ্যাপটি কীভাবে কাজ করে..."></textarea></div>
+        <div class="fr">
+          <div class="fg"><label>ক্যাটাগরি</label>
+            <select id="na-cat"><option value="earn">💰 আয়</option><option value="task">✅ টাস্ক</option><option value="video">🎬 ভিডিও</option><option value="finance">💳 ফিনান্স</option><option value="game">🎮 গেম</option><option value="tools">🔧 টুলস</option><option value="social">💬 সোশ্যাল</option><option value="education">📚 শিক্ষা</option><option value="other">📦 অন্য</option></select>
+          </div>
+          <div class="fg"><label>সম্ভাব্য আয় / দিন</label><input type="text" id="na-earn" placeholder="যেমন: ৳৫০-২০০"></div>
+        </div>
+        <div class="fg"><label>ডাউনলোড লিংক *</label><input type="url" id="na-dl" placeholder="https://..."></div>
+        <div class="fg"><label>আইকন URL (ইমেজ লিংক)</label><input type="url" id="na-icon" placeholder="https://..."></div>
+
+        <!-- গ্যালারি থেকে লোগো আপলোড -->
+        <div style="background:rgba(0,212,170,.06);border:1px solid rgba(0,212,170,.2);border-radius:12px;padding:14px;margin-bottom:14px;">
+          <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:10px;">📸 অথবা গ্যালারি থেকে লোগো আপলোড করুন</div>
+          <div id="icon-drop-area" onclick="document.getElementById('na-icon-file').click()" style="border:2px dashed var(--accent);border-radius:10px;padding:18px;text-align:center;cursor:pointer;background:rgba(0,212,170,.03);margin-bottom:10px;">
+            <div style="font-size:32px;margin-bottom:6px;">🖼️</div>
+            <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:3px;">লোগো সিলেক্ট করুন</div>
+            <div style="font-size:11px;color:var(--muted);">গ্যালারি থেকে বেছে নিন (JPG, PNG, WEBP)</div>
+            <input type="file" id="na-icon-file" accept="image/*" style="display:none" onchange="onIconFileSelect(this)">
+          </div>
+          <div id="icon-preview-wrap" style="display:none;align-items:center;gap:12px;margin-bottom:10px;">
+            <img id="icon-preview-img" style="width:64px;height:64px;border-radius:14px;object-fit:cover;border:2px solid var(--accent);">
+            <div>
+              <div id="icon-file-name" style="font-size:11px;color:var(--green);font-weight:600;"></div>
+              <button onclick="clearIconPreview()" style="background:none;border:none;color:var(--red);font-size:11px;cursor:pointer;margin-top:4px;">✕ বাতিল</button>
+            </div>
+          </div>
+          <div id="icon-progress-wrap" style="display:none;margin-bottom:10px;">
+            <div style="font-size:12px;color:var(--muted);margin-bottom:4px;">আপলোড হচ্ছে...</div>
+            <div style="height:6px;background:var(--border);border-radius:4px;overflow:hidden;">
+              <div id="icon-progress-bar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;width:0%;transition:width .3s;"></div>
+            </div>
+            <div id="icon-progress-pct" style="font-size:11px;color:var(--accent);margin-top:3px;font-weight:700;">0%</div>
+          </div>
+          <div id="icon-upload-ok" style="font-size:11px;color:var(--green);font-weight:600;display:none;">✅ লোগো আপলোড সফল! URL স্বয়ংক্রিয়ভাবে বসেছে।</div>
+        </div>
+          <div class="fg"><label>রেটিং (০-৫)</label><input type="number" id="na-rating" value="4.0" min="0" max="5" step="0.1"></div>
+          <div class="fg"><label>সাইজ</label><input type="text" id="na-size" placeholder="যেমন: 25MB"></div>
+        </div>
+        <div class="fr">
+          <div class="fg"><label>ভার্সন</label><input type="text" id="na-ver" placeholder="1.0.0"></div>
+          <div class="fg"><label>আপডেটের সময়</label><input type="datetime-local" id="na-time"></div>
+        </div>
+        <div class="fg"><label>স্ক্রিনশট ১ URL</label><input type="url" id="na-ss1" placeholder="https://..."></div>
+        <div class="fg"><label>স্ক্রিনশট ২ URL</label><input type="url" id="na-ss2" placeholder="https://..."></div>
+        <div class="fg"><label>স্ক্রিনশট ৩ URL</label><input type="url" id="na-ss3" placeholder="https://..."></div>
+        <div class="cbr"><input type="checkbox" id="na-feat"><label for="na-feat">⭐ ফিচার্ড হিসেবে যোগ করুন</label></div>
+        <div class="cbr"><input type="checkbox" id="na-new" checked><label for="na-new">🆕 নতুন ব্যাজ দেখান</label></div>
+        <div class="fe" id="na-err"></div><div class="fok" id="na-ok"></div>
+        <button class="btn-p" style="width:100%;" onclick="doAddApp()">➕ অ্যাপ লাইভ করুন</button>
+      </div>
+    </div>
+
+    <!-- ═════════ FEATURED ═════════ -->
+    <div class="pg" id="pg-featured">
+      <div class="ptitle">⭐ ফিচার্ড অ্যাপ</div>
+      <div class="tw">
+        <div class="th"><div class="tt">ফিচার্ড: <span id="cnt-feat">0</span></div></div>
+        <table><thead><tr><th>অ্যাপ</th><th>ক্যাটাগরি</th><th>আয়</th><th>DL</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-feat"><tr class="ldr"><td colspan="5"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ PENDING ═════════ -->
+    <div class="pg" id="pg-pending">
+      <div class="ptitle">⏳ পেন্ডিং অ্যাপ অনুমোদন</div>
+      <div class="tw">
+        <div class="th"><div class="tt">পেন্ডিং: <span id="cnt-pend">0</span></div></div>
+        <table><thead><tr><th>অ্যাপ</th><th>ডেভেলপার</th><th>ইমেইল</th><th>ধরন</th><th>সময়</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-pend"><tr class="ldr"><td colspan="6"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ DEVELOPER USERS ═════════ -->
+    <div class="pg" id="pg-devusers">
+      <div class="ptitle">💻 ডেভেলপার ম্যানেজমেন্ট</div>
+      <div class="tw">
+        <div class="th">
+          <div class="tt">মোট: <span id="cnt-devs">0</span></div>
+          <input class="sm" type="text" placeholder="🔍 নাম / ইমেইল..." id="s-devs" oninput="rDevs()">
+        </div>
+        <table><thead><tr><th>নাম</th><th>ইমেইল</th><th>ফলোয়ার</th><th>মনিটাইজ</th><th>সাবস্ক্রাইব</th><th>মোট আয়</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-devs"><tr class="ldr"><td colspan="7"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+      <!-- Dev Apps breakdown -->
+      <div class="tw">
+        <div class="th"><div class="tt">📱 ডেভেলপারদের অ্যাপ</div></div>
+        <table><thead><tr><th>অ্যাপ</th><th>ডেভেলপার</th><th>ইমেইল</th><th>DL</th><th>স্টার</th><th>আয়</th><th>টাইপ</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-devapps"><tr class="ldr"><td colspan="8"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ FOLLOWS ═════════ -->
+    <div class="pg" id="pg-follows">
+      <div class="ptitle">👥 ফলো রেকর্ড</div>
+      <div class="tw">
+        <div class="th"><div class="tt">মোট: <span id="cnt-follows">0</span></div></div>
+        <table><thead><tr><th>ইউজার ID</th><th>Dev UID</th><th>সময়</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-follows"><tr class="ldr"><td colspan="4"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ WITHDRAWALS ═════════ -->
+    <div class="pg" id="pg-withdraw">
+      <div class="ptitle">💸 উইথড্র রিকোয়েস্ট</div>
+      <div class="tw">
+        <div class="th"><div class="tt">পেন্ডিং: <span id="cnt-wd">0</span></div></div>
+        <table><thead><tr><th>ডেভেলপার</th><th>মেথড</th><th>নম্বর / ঠিকানা</th><th>পরিমাণ</th><th>মুদ্রা</th><th>স্ট্যাটাস</th><th>সময়</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-wd"><tr class="ldr"><td colspan="8"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ SUBSCRIPTIONS ═════════ -->
+    <div class="pg" id="pg-sub">
+      <div class="ptitle">👑 সাবস্ক্রিপশন রিকোয়েস্ট</div>
+      <div class="tw">
+        <div class="th"><div class="tt">পেন্ডিং: <span id="cnt-sub">0</span></div></div>
+        <table><thead><tr><th>ডেভেলপার</th><th>মেথড</th><th>ট্রানজেকশন ID</th><th>পরিমাণ</th><th>স্ট্যাটাস</th><th>সময়</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-sub"><tr class="ldr"><td colspan="7"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ MONETIZE ═════════ -->
+    <div class="pg" id="pg-mono">
+      <div class="ptitle">💰 মনিটাইজ রিকোয়েস্ট</div>
+      <div class="tw">
+        <div class="th"><div class="tt">মোট: <span id="cnt-mono">0</span></div></div>
+        <table><thead><tr><th>ডেভেলপার</th><th>রিয়েল নাম</th><th>WhatsApp</th><th>ক্যাটাগরি</th><th>স্ট্যাটাস</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-mono"><tr class="ldr"><td colspan="6"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ COMMENTS ═════════ -->
+    <div class="pg" id="pg-comments">
+      <div class="ptitle">💬 মন্তব্য ম্যানেজমেন্ট</div>
+      <div class="tw">
+        <div class="th">
+          <div class="tt">মোট: <span id="cnt-cmts">0</span></div>
+          <div class="ta">
+            <input class="sm" type="text" placeholder="🔍 মন্তব্য / ইউজার..." id="s-cmts" oninput="rCmts()">
+            <button class="btn btn-dn" onclick="deleteAllComments()" style="font-size:11px;">🗑️ সব মুছুন</button>
+          </div>
+        </div>
+        <table><thead><tr><th>ইউজার</th><th>মন্তব্য</th><th>অ্যাপ ID</th><th>সময়</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-cmts"><tr class="ldr"><td colspan="5"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ RATINGS ═════════ -->
+    <div class="pg" id="pg-ratings">
+      <div class="ptitle">⭐ রেটিং ম্যানেজমেন্ট</div>
+      <div class="tw">
+        <div class="th"><div class="tt">মোট: <span id="cnt-rats">0</span></div></div>
+        <table><thead><tr><th>ইউজার ID</th><th>অ্যাপ ID</th><th>মান</th><th>সময়</th><th>একশন</th></tr></thead>
+        <tbody id="tbl-rats"><tr class="ldr"><td colspan="5"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ NOTIFICATION LOG ═════════ -->
+    <div class="pg" id="pg-notif">
+      <div class="ptitle">🔔 নোটিফিকেশন লগ (সর্বশেষ অ্যাপ)</div>
+      <p style="color:var(--muted);font-size:12px;margin-bottom:14px;">EarnZone-BD ও Developer Zone উভয় সাইটের নোটিফিকেশন সিস্টেম apps কালেকশনের সর্বশেষ ৩০টি অ্যাপের উপর ভিত্তি করে। এখানে সেই অ্যাপগুলোর তালিকা দেখাচ্ছে।</p>
+      <div class="tw">
+        <div class="th"><div class="tt">সর্বশেষ ৩০ অ্যাপ (নোটিফ লগ)</div></div>
+        <table><thead><tr><th>অ্যাপ</th><th>ডেভেলপার</th><th>সময়</th><th>নতুন / আপডেট</th></tr></thead>
+        <tbody id="tbl-notif"><tr class="ldr"><td colspan="4"><div class="sp"></div>লোড হচ্ছে...</td></tr></tbody>
+      </table></div>
+    </div>
+
+    <!-- ═════════ SITE SETTINGS ═════════ -->
+    <div class="pg" id="pg-siteset">
+      <div class="ptitle">⚙️ সাইট সেটিংস</div>
+      <div class="card" style="max-width:580px;">
+        <h3>🎯 EarnZone-BD.html সেটিংস (Firestore: settings/site)</h3>
+        <div class="fg"><label>📢 টিকার টেক্সট</label><input type="text" id="s-ticker" placeholder="যেমন: 🎉 নতুন অ্যাপ যোগ হয়েছে!"></div>
+        <div class="fg"><label>🏷️ হিরো ব্যাজ টেক্সট</label><input type="text" id="s-badge" placeholder="যেমন: 🚀 বাংলাদেশের #১ আর্নিং প্ল্যাটফর্ম"></div>
+        <div class="fg"><label>📝 হিরো সাবটাইটেল</label><input type="text" id="s-sub" placeholder="হিরো সেকশনের বিবরণ"></div>
+        <div class="fg" style="border-top:1px solid var(--border);padding-top:14px;margin-top:6px;">
+          <label>💻 Dev বাটন লিংক (EarnZone-BD.html এ)</label>
+          <input type="url" id="s-devlink" placeholder="যেমন: https://developer-zone.netlify.app">
+          <div style="font-size:11px;color:var(--muted);margin-top:4px;">⬆️ এই লিংকে চাপ দিলে ইউজার সাইটের Dev বাটন যাবে</div>
+        </div>
+        <div class="fok" id="s-ok"></div>
+        <button class="btn-p" style="width:100%;" onclick="saveSettings()">💾 সেটিংস সেভ করুন</button>
+      </div>
+    </div>
+
+    <!-- ═════════ TICKER / HERO ═════════ -->
+    <div class="pg" id="pg-ticker">
+      <div class="ptitle">📢 টিকার ও হিরো সেকশন</div>
+      <div class="card" style="max-width:580px;">
+        <h3>বর্তমান সেটিংস (লাইভ ভ্যালু)</h3>
+        <div id="live-settings" style="color:var(--muted);font-size:13px;">লোড হচ্ছে...</div>
+        <button class="btn-p" style="margin-top:14px;" onclick="go('siteset',document.querySelector('.ni:not(.on)'))">✏️ সেটিংস এডিট করুন</button>
+      </div>
+      <div class="card" style="max-width:580px;">
+        <h3>📊 Hero Stats কাস্টমাইজ করুন</h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:10px;">EarnZone-BD.html এর hero stats স্বয়ংক্রিয়ভাবে apps কালেকশন থেকে count করে। নিচে অন্য stats Firebase-এ সেভ করতে পারেন:</p>
+        <div class="fr">
+          <div class="fg"><label>দৈনিক আয় লেবেল (hero)</label><input type="text" id="h-earn" placeholder="৳500+"></div>
+          <div class="fg"><label>অন্য ট্যাগ</label><input type="text" id="h-tag" placeholder="100%"></div>
+        </div>
+        <button class="btn-p" style="width:100%;" onclick="saveHeroStats()">💾 হিরো Stats আপডেট করুন</button>
+        <div class="fok" id="h-ok"></div>
+      </div>
+    </div>
+
+    <!-- ═════════ BANNER SLIDER ═════════ -->
+    <div class="pg" id="pg-banners">
+      <div class="ptitle">🖼️ ব্যানার স্লাইডার ম্যানেজমেন্ট</div>
+      <div class="card" style="max-width:620px;">
+        <h3>📸 গ্যালারি থেকে ছবি আপলোড করুন</h3>
+        <p style="font-size:12px;color:var(--muted);margin-bottom:14px;">ফোনের গ্যালারি বা কম্পিউটার থেকে ছবি সিলেক্ট করুন। ইউজার পেজে YouTube সাইজে (16:9) ৫ সেকেন্ড করে স্লাইড হবে।</p>
+
+        <!-- Cloudinary info -->
+        <div style="background:rgba(0,153,255,.06);border:1px solid rgba(0,153,255,.2);border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:var(--muted);">
+          ☁️ ছবি সরাসরি <strong style="color:var(--accent2);">Cloudinary</strong> তে আপলোড হবে — কোনো API Key লাগবে না।
+        </div>
+
+        <!-- FILE UPLOAD AREA -->
+        <div id="bn-drop-area" style="border:2px dashed var(--accent);border-radius:12px;padding:24px;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:14px;background:rgba(0,212,170,.04);" onclick="document.getElementById('bn-file').click()">
+          <div id="bn-drop-icon" style="font-size:38px;margin-bottom:8px;">📸</div>
+          <div style="font-size:13px;font-weight:700;color:var(--accent);margin-bottom:4px;">ছবি সিলেক্ট করুন</div>
+          <div style="font-size:11px;color:var(--muted);">গ্যালারি / ক্যামেরা থেকে বেছে নিন (JPG, PNG, WEBP)</div>
+          <input type="file" id="bn-file" accept="image/*" style="display:none" onchange="onBnFileSelect(this)">
+        </div>
+
+        <!-- IMAGE PREVIEW (16:9) -->
+        <div id="bn-preview-wrap" style="display:none;margin-bottom:14px;">
+          <div style="position:relative;width:100%;padding-top:56.25%;border-radius:10px;overflow:hidden;background:#000;border:1px solid var(--border);">
+            <img id="bn-preview-img" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;">
+          </div>
+          <div style="font-size:11px;color:var(--green);margin-top:6px;font-weight:600;" id="bn-file-name"></div>
+        </div>
+
+        <!-- UPLOAD PROGRESS -->
+        <div id="bn-progress-wrap" style="display:none;margin-bottom:14px;">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:5px;">আপলোড হচ্ছে...</div>
+          <div style="height:8px;background:var(--border);border-radius:4px;overflow:hidden;">
+            <div id="bn-progress-bar" style="height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:4px;width:0%;transition:width .3s;"></div>
+          </div>
+          <div id="bn-progress-pct" style="font-size:11px;color:var(--accent);margin-top:4px;font-weight:700;">0%</div>
+        </div>
+
+        <div class="fg"><label>📝 ক্যাপশন (ঐচ্ছিক)</label><input type="text" id="bn-caption" placeholder="যেমন: নতুন অ্যাপ লঞ্চ! এখনই ডাউনলোড করুন"></div>
+        <div class="fg"><label>🔗 ক্লিক লিংক (ঐচ্ছিক)</label><input type="url" id="bn-link" placeholder="https://... (ব্যানারে ক্লিক করলে কোথায় যাবে)"></div>
+        <div class="fr">
+          <div class="fg"><label>🔢 ক্রম (অর্ডার)</label><input type="number" id="bn-order" value="1" min="1" max="99"></div>
+          <div class="fg"><label>✅ অবস্থা</label>
+            <select id="bn-active"><option value="true">✅ চালু — দেখাবে</option><option value="false">❌ বন্ধ — লুকানো</option></select>
+          </div>
+        </div>
+        <div class="fe" id="bn-err"></div>
+        <div class="fok" id="bn-ok"></div>
+        <button class="btn-p" style="width:100%;" id="bn-submit-btn" onclick="addBanner()" disabled>📸 ছবি আপলোড করুন</button>
+      </div>
+
+      <!-- BANNER LIST -->
+      <div class="tw" style="max-width:800px;">
+        <div class="th">
+          <div class="tt">📋 সব ব্যানার <span id="cnt-banners" style="color:var(--accent);font-size:12px;margin-left:4px;">0</span></div>
+          <button class="btn btn-r" onclick="deleteAllBanners()" style="font-size:11px;">🗑️ সব মুছুন</button>
+        </div>
+        <div id="banner-list" style="padding:12px;display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:14px;">
+          <div style="text-align:center;padding:30px;color:var(--muted);grid-column:1/-1;">লোড হচ্ছে...</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ BULK ACTIONS ═════════ -->
+    <div class="pg" id="pg-bulk">
+      <div class="ptitle">⚡ বাল্ক একশন</div>
+      <div class="card" style="max-width:600px;">
+        <h3>📱 অ্যাপ বাল্ক একশন</h3>
+        <div class="qa-grid">
+          <button class="qa-btn" onclick="bulkNew(true)" style="background:rgba(34,197,94,.1);border-color:rgba(34,197,94,.3);color:var(--green);">🆕 সব অ্যাপে নতুন ব্যাজ দিন</button>
+          <button class="qa-btn" onclick="bulkNew(false)" style="background:rgba(245,197,24,.1);border-color:rgba(245,197,24,.3);color:var(--gold);">🔄 সব থেকে নতুন ব্যাজ সরান</button>
+          <button class="qa-btn" onclick="bulkApproveAll()" style="background:rgba(0,212,170,.1);border-color:rgba(0,212,170,.3);color:var(--accent);">✅ সব পেন্ডিং অ্যাপ অনুমোদন করুন</button>
+          <button class="qa-btn btn-dn" onclick="deleteAllApps()">🗑️ সব অ্যাপ মুছুন (বিপজ্জনক!)</button>
+        </div>
+      </div>
+      <div class="card" style="max-width:600px;">
+        <h3>💬 মন্তব্য ও রেটিং বাল্ক একশন</h3>
+        <div class="qa-grid">
+          <button class="qa-btn btn-dn" onclick="deleteAllComments()">🗑️ সব মন্তব্য মুছুন</button>
+          <button class="qa-btn btn-dn" onclick="deleteAllRatings()">🗑️ সব রেটিং মুছুন</button>
+          <button class="qa-btn btn-dn" onclick="deleteAllFollows()">🗑️ সব ফলো মুছুন</button>
+        </div>
+      </div>
+      <div class="card" style="max-width:600px;">
+        <h3>💸 উইথড্র বাল্ক একশন</h3>
+        <div class="qa-grid">
+          <button class="qa-btn btn-a" onclick="approveAllWithdraw()">✅ সব পেন্ডিং উইথড্র অনুমোদন করুন</button>
+          <button class="qa-btn btn-r" onclick="rejectAllWithdraw()">❌ সব পেন্ডিং উইথড্র বাতিল করুন</button>
+        </div>
+      </div>
+      <div class="card" style="max-width:600px;">
+        <h3>👑 সাবস্ক্রিপশন বাল্ক একশন</h3>
+        <div class="qa-grid">
+          <button class="qa-btn btn-a" onclick="approveAllSubs()">✅ সব পেন্ডিং সাবস্ক্রিপশন অনুমোদন করুন</button>
+          <button class="qa-btn btn-r" onclick="rejectAllSubs()">❌ সব পেন্ডিং সাবস্ক্রিপশন বাতিল করুন</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ═════════ FIREBASE LINKS ═════════ -->
+    <div class="pg" id="pg-fblinks">
+      <div class="ptitle">🔗 Firebase Console লিংক</div>
+      <div class="card" style="max-width:500px;">
+        <h3>সরাসরি Firebase Console এ যান</h3>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px;">
+          <a href="https://console.firebase.google.com/project/earnzone-bd/firestore/data/~2Fapps" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,153,255,.08);border:1px solid rgba(0,153,255,.25);border-radius:9px;color:var(--accent2);font-size:13px;font-weight:700;text-decoration:none;">🗄️ Firestore → apps কালেকশন</a>
+          <a href="https://console.firebase.google.com/project/earnzone-bd/firestore/data/~2Fdevelopers" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,153,255,.08);border:1px solid rgba(0,153,255,.25);border-radius:9px;color:var(--accent2);font-size:13px;font-weight:700;text-decoration:none;">🗄️ Firestore → developers কালেকশন</a>
+          <a href="https://console.firebase.google.com/project/earnzone-bd/firestore/data/~2Fwithdrawals" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,153,255,.08);border:1px solid rgba(0,153,255,.25);border-radius:9px;color:var(--accent2);font-size:13px;font-weight:700;text-decoration:none;">🗄️ Firestore → withdrawals কালেকশন</a>
+          <a href="https://console.firebase.google.com/project/earnzone-bd/firestore/data/~2Fsubscription_requests" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,153,255,.08);border:1px solid rgba(0,153,255,.25);border-radius:9px;color:var(--accent2);font-size:13px;font-weight:700;text-decoration:none;">🗄️ Firestore → subscription_requests</a>
+          <a href="https://console.firebase.google.com/project/earnzone-bd/firestore/data/~2Fmonetize_requests" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,153,255,.08);border:1px solid rgba(0,153,255,.25);border-radius:9px;color:var(--accent2);font-size:13px;font-weight:700;text-decoration:none;">🗄️ Firestore → monetize_requests</a>
+          <a href="https://console.firebase.google.com/project/earnzone-bd/firestore/data/~2Fcomments" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,153,255,.08);border:1px solid rgba(0,153,255,.25);border-radius:9px;color:var(--accent2);font-size:13px;font-weight:700;text-decoration:none;">🗄️ Firestore → comments কালেকশন</a>
+          <a href="https://console.firebase.google.com/project/earnzone-bd/firestore/data/~2Fratings" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(0,153,255,.08);border:1px solid rgba(0,153,255,.25);border-radius:9px;color:var(--accent2);font-size:13px;font-weight:700;text-decoration:none;">🗄️ Firestore → ratings কালেকশন</div>
+          <a href="https://console.firebase.google.com/project/earnzone-bd/authentication/users" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(168,85,247,.08);border:1px solid rgba(168,85,247,.25);border-radius:9px;color:var(--purple);font-size:13px;font-weight:700;text-decoration:none;">👤 Firebase Authentication (ইউজার লিস্ট)</a>
+          <a href="https://console.firebase.google.com/project/earnzone-bd/storage" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(245,197,24,.08);border:1px solid rgba(245,197,24,.25);border-radius:9px;color:var(--gold);font-size:13px;font-weight:700;text-decoration:none;">📦 Firebase Storage</a>
+          <a href="https://console.firebase.google.com/project/earnzone-bd/analytics" target="_blank" style="display:flex;align-items:center;gap:8px;padding:10px 14px;background:rgba(34,197,94,.08);border:1px solid rgba(34,197,94,.25);border-radius:9px;color:var(--green);font-size:13px;font-weight:700;text-decoration:none;">📈 Firebase Analytics</a>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /ct -->
+</div><!-- /wrap -->
+
+<div class="toast" id="toast"></div>
+
+<!-- ══ EDIT APP MODAL ══ -->
+<div class="ov" id="editOv">
+  <div class="pn">
+    <div class="ph"><h2>✏️ অ্যাপ এডিট</h2><button class="cx" onclick="cov('editOv')">✕</button></div>
+    <input type="hidden" id="e-id">
+    <div class="fr">
+      <div class="fg"><label>নাম *</label><input type="text" id="e-name"></div>
+      <div class="fg"><label>ডেভেলপার</label><input type="text" id="e-dev"></div>
+    </div>
+    <div class="fg"><label>বিবরণ *</label><textarea id="e-desc"></textarea></div>
+    <div class="fr">
+      <div class="fg"><label>ক্যাটাগরি</label>
+        <select id="e-cat"><option value="earn">💰 আয়</option><option value="task">✅ টাস্ক</option><option value="video">🎬 ভিডিও</option><option value="finance">💳 ফিনান্স</option><option value="game">🎮 গেম</option><option value="tools">🔧 টুলস</option><option value="social">💬 সোশ্যাল</option><option value="education">📚 শিক্ষা</option><option value="other">📦 অন্য</option></select>
+      </div>
+      <div class="fg"><label>সম্ভাব্য আয়</label><input type="text" id="e-earn"></div>
+    </div>
+    <div class="fg"><label>ডাউনলোড লিংক *</label><input type="url" id="e-dl"></div>
+    <div class="fg"><label>আইকন URL</label><input type="url" id="e-icon"></div>
+    <div class="fr">
+      <div class="fg"><label>রেটিং</label><input type="number" id="e-rating" min="0" max="5" step="0.1"></div>
+      <div class="fg"><label>সাইজ</label><input type="text" id="e-size"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>ভার্সন</label><input type="text" id="e-ver"></div>
+      <div class="fg"><label>ডাউনলোড কাউন্ট</label><input type="number" id="e-dl2" min="0"></div>
+    </div>
+    <div class="fr">
+      <div class="fg"><label>স্টার কাউন্ট</label><input type="number" id="e-sc" min="0"></div>
+      <div class="fg"><label>স্টার টোটাল</label><input type="number" id="e-st" min="0"></div>
+    </div>
+    <div class="fg"><label>ফলোয়ার কাউন্ট</label><input type="number" id="e-follows" min="0"></div>
+    <div class="fg"><label>স্ক্রিনশট ১ URL</label><input type="url" id="e-ss1"></div>
+    <div class="fg"><label>স্ক্রিনশট ২ URL</label><input type="url" id="e-ss2"></div>
+    <div class="fg"><label>স্ক্রিনশট ৩ URL</label><input type="url" id="e-ss3"></div>
+    <div class="cbr"><input type="checkbox" id="e-feat"><label for="e-feat">⭐ ফিচার্ড</label></div>
+    <div class="cbr"><input type="checkbox" id="e-new"><label for="e-new">🆕 নতুন ব্যাজ</label></div>
+    <div class="fr">
+      <div class="fg"><label>স্ট্যাটাস</label>
+        <select id="e-status"><option value="approved">✅ Approved</option><option value="pending">⏳ Pending</option><option value="rejected">❌ Rejected</option></select>
+      </div>
+      <div class="fg"><label>আপলোড টাইপ</label>
+        <select id="e-uptype"><option value="premium">👑 Premium</option><option value="free">🆓 Free</option></select>
+      </div>
+    </div>
+    <div class="fe" id="e-err"></div>
+    <button class="btn-p" style="width:100%;" onclick="doEdit()">💾 সেভ করুন</button>
+    <button class="btn-g" onclick="cov('editOv')">বাতিল</button>
+  </div>
+</div>
+
+<!-- ══ CONFIRM MODAL ══ -->
+<div class="ov" id="cfmOv">
+  <div class="pn" style="max-width:360px;text-align:center;">
+    <div style="font-size:36px;margin-bottom:10px;" id="cfm-ico">⚠️</div>
+    <div style="font-size:15px;font-weight:700;margin-bottom:6px;" id="cfm-title">নিশ্চিত করুন</div>
+    <div style="font-size:12px;color:var(--muted);margin-bottom:20px;" id="cfm-msg"></div>
+    <div style="display:flex;gap:8px;justify-content:center;">
+      <button class="btn btn-a" style="padding:9px 18px;font-size:13px;" id="cfm-ok">✅ হ্যাঁ</button>
+      <button class="btn btn-r" style="padding:9px 18px;font-size:13px;" onclick="cov('cfmOv')">❌ বাতিল</button>
+    </div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/11.0.2/firebase-app.js";
+import {
+  getFirestore, collection, addDoc, updateDoc, deleteDoc, doc,
+  onSnapshot, getDoc, getDocs, query, where, serverTimestamp, setDoc, increment, orderBy
+} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-firestore.js";
+import {
+  getStorage, ref, uploadBytesResumable, getDownloadURL, deleteObject
+} from "https://www.gstatic.com/firebasejs/11.0.2/firebase-storage.js";
+
+const FC = {
+  apiKey:"AIzaSyDdDWlW23G-rh6HnKdIr8bA-TvwyVezuMA",
+  authDomain:"earnzone-bd.firebaseapp.com",
+  projectId:"earnzone-bd",
+  storageBucket:"earnzone-bd.firebasestorage.app",
+  messagingSenderId:"681012350883",
+  appId:"1:681012350883:web:83229b7a62c87e1d259416"
+};
+const db = getFirestore(initializeApp(FC));
+const storage = getStorage();
+
+// ── CACHE ──
+let A={apps:[],devs:[],wd:[],subs:[],monos:[],cmts:[],rats:[],follows:[],banners:[]};
+let loaded=false;
+
+// ══════════════════════════
+// LOGIN
+// ══════════════════════════
+window.login = () => {
+  if(document.getElementById('ap').value === '1234'){
+    document.getElementById('loginScreen').style.display='none';
+    document.getElementById('hdr').classList.add('on');
+    document.getElementById('wrap').classList.add('on');
+    if(!loaded){ loadAll(); loaded=true; }
+    // ImgBB key restore
+
+  } else {
+    document.getElementById('le').textContent='❌ পাসওয়ার্ড ভুল';
+    document.getElementById('ap').value='';
+    setTimeout(()=>document.getElementById('le').textContent='',2000);
+  }
+};
+window.logout = () => {
+  document.getElementById('loginScreen').style.display='';
+  document.getElementById('hdr').classList.remove('on');
+  document.getElementById('wrap').classList.remove('on');
+  document.getElementById('ap').value=''; loaded=false;
+};
+document.getElementById('ap').addEventListener('keydown', e=>{ if(e.key==='Enter') window.login(); });
+
+// ══════════════════════════
+// NAV
+// ══════════════════════════
+let curPage='dash';
+window.go = (id, el) => {
+  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
+  document.querySelectorAll('.ni').forEach(n=>n.classList.remove('on'));
+  document.getElementById('pg-'+id).classList.add('on');
+  if(el) el.classList.add('on');
+  curPage=id; render(id);
+};
+
+// ══════════════════════════
+// TOAST / CONFIRM
+// ══════════════════════════
+function toast(msg, c='var(--green)'){
+  const t=document.getElementById('toast'); t.textContent=msg; t.style.background=c;
+  t.classList.add('show'); setTimeout(()=>t.classList.remove('show'),2800);
+}
+function cov(id){ document.getElementById(id).classList.remove('open'); }
+function ov(id){ document.getElementById(id).classList.add('open'); }
+window.cov=cov;
+
+function cfm(ico,title,msg,cb){
+  document.getElementById('cfm-ico').textContent=ico;
+  document.getElementById('cfm-title').textContent=title;
+  document.getElementById('cfm-msg').textContent=msg;
+  document.getElementById('cfm-ok').onclick=()=>{ cov('cfmOv'); cb(); };
+  ov('cfmOv');
+}
+
+// ══════════════════════════
+// HELPERS
+// ══════════════════════════
+const catL = c=>({earn:'💰 আয়',task:'✅ টাস্ক',video:'🎬 ভিডিও',finance:'💳 ফিনান্স',game:'🎮 গেম',tools:'🔧 টুলস',social:'💬 সোশ্যাল',education:'📚 শিক্ষা',other:'📦 অন্য'}[c]||c||'—');
+const ta=(ts)=>{ if(!ts)return '—'; const d=ts.toDate?ts.toDate():new Date(ts); const diff=(Date.now()-d.getTime())/1000; if(diff<60)return 'এইমাত্র'; if(diff<3600)return Math.floor(diff/60)+' মিনিট আগে'; if(diff<86400)return Math.floor(diff/3600)+' ঘন্টা আগে'; return Math.floor(diff/86400)+' দিন আগে'; };
+const ico=(a)=>`<div class="ath">${a.iconUrl?`<img src="${a.iconUrl}" onerror="this.style.display='none'">`:(a.icon||'📱')}</div>`;
+const sb=(cls,txt)=>`<span class="b ${cls}">${txt}</span>`;
+const st=(s)=>s==='approved'?sb('bg','✅ অনুমোদিত'):s==='rejected'?sb('br','❌ বাতিল'):sb('bo','⏳ পেন্ডিং');
+
+// ══════════════════════════
+// LOAD ALL
+// ══════════════════════════
+function loadAll(){
+  onSnapshot(collection(db,'apps'), s=>{ A.apps=s.docs.map(d=>({id:d.id,...d.data()})); updDash(); render(curPage); updBadges(); });
+  onSnapshot(collection(db,'developers'), s=>{ A.devs=s.docs.map(d=>({id:d.id,...d.data()})); updDash(); render(curPage); });
+  onSnapshot(collection(db,'withdrawals'), s=>{ A.wd=s.docs.map(d=>({id:d.id,...d.data()})); updDash(); render(curPage); updBadges(); });
+  onSnapshot(collection(db,'subscription_requests'), s=>{ A.subs=s.docs.map(d=>({id:d.id,...d.data()})); updDash(); render(curPage); updBadges(); });
+  onSnapshot(collection(db,'monetize_requests'), s=>{ A.monos=s.docs.map(d=>({id:d.id,...d.data()})); render(curPage); });
+  onSnapshot(collection(db,'comments'), s=>{ A.cmts=s.docs.map(d=>({id:d.id,...d.data()})); updDash(); render(curPage); });
+  onSnapshot(collection(db,'ratings'), s=>{ A.rats=s.docs.map(d=>({id:d.id,...d.data()})); updDash(); render(curPage); });
+  onSnapshot(collection(db,'follows'), s=>{ A.follows=s.docs.map(d=>({id:d.id,...d.data()})); render(curPage); });
+  onSnapshot(collection(db,'banners'), s=>{ A.banners=s.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>(a.order||99)-(b.order||99)); rBanners(); });
+  // Load settings
+  getDoc(doc(db,'settings','site')).then(d=>{
+    if(d.exists()){ const s=d.data();
+      if(s.ticker) document.getElementById('s-ticker').value=s.ticker;
+      if(s.heroBadge) document.getElementById('s-badge').value=s.heroBadge;
+      if(s.heroSub) document.getElementById('s-sub').value=s.heroSub;
+      if(s.devLink) document.getElementById('s-devlink').value=s.devLink;
+      document.getElementById('live-settings').innerHTML=`
+        <div class="info-r"><span class="info-l">📢 টিকার</span><span>${s.ticker||'—'}</span></div>
+        <div class="info-r"><span class="info-l">🏷️ হিরো ব্যাজ</span><span>${s.heroBadge||'—'}</span></div>
+        <div class="info-r"><span class="info-l">📝 সাবটাইটেল</span><span>${s.heroSub||'—'}</span></div>
+        <div class="info-r"><span class="info-l">💻 Dev লিংক</span><span style="color:var(--accent2);word-break:break-all;">${s.devLink||'—'}</span></div>`;
+    } else { document.getElementById('live-settings').textContent='কোনো সেটিং নেই এখনো।'; }
+  });
+}
+
+function updBadges(){
+  const p=A.apps.filter(a=>a.status==='pending').length;
+  const w=A.wd.filter(x=>x.status==='pending').length;
+  const s=A.subs.filter(x=>x.status==='pending').length;
+  const pn=document.getElementById('nb-pending'), wn=document.getElementById('nb-wd'), sn=document.getElementById('nb-sub');
+  pn.style.display=p?'':'none'; pn.textContent=p;
+  wn.style.display=w?'':'none'; wn.textContent=w;
+  sn.style.display=s?'':'none'; sn.textContent=s;
+}
+
+function updDash(){
+  const $ = id => document.getElementById(id);
+  $('d-apps').textContent = A.apps.length;
+  $('d-devs').textContent = A.devs.length;
+  $('d-pend').textContent = A.apps.filter(a=>a.status==='pending').length;
+  $('d-wd').textContent   = A.wd.filter(x=>x.status==='pending').length;
+  $('d-sub').textContent  = A.subs.filter(x=>x.status==='pending').length;
+  $('d-feat').textContent = A.apps.filter(a=>a.featured).length;
+  $('d-cmts').textContent = A.cmts.length;
+  $('d-rats').textContent = A.rats.length;
+}
+
+// ══════════════════════════
+// RENDER DISPATCHER
+// ══════════════════════════
+function render(id){
+  if(id==='dash') rDash();
+  else if(id==='apps') rApps();
+  else if(id==='featured') rFeat();
+  else if(id==='pending') rPend();
+  else if(id==='devusers') rDevsAll();
+  else if(id==='follows') rFollows();
+  else if(id==='withdraw') rWd();
+  else if(id==='sub') rSub();
+  else if(id==='mono') rMono();
+  else if(id==='comments') rCmts();
+  else if(id==='ratings') rRats();
+  else if(id==='notif') rNotif();
+  else if(id==='banners') rBanners();
+}
+
+// ═══════════════ RENDERERS ═══════════════
+
+function rDash(){
+  const sorted=[...A.apps].sort((a,b)=>{ const ta_=a.submittedAt?.toMillis?.()|| a.updateTime||0, tb_=b.submittedAt?.toMillis?.()|| b.updateTime||0; return tb_-ta_; }).slice(0,10);
+  document.getElementById('dash-apps').innerHTML = sorted.length ? sorted.map(a=>`<tr>
+    <td><div class="ac">${ico(a)}<div><div class="an">${a.name}</div><div class="as">${a.dev||'—'}</div></div></div></td>
+    <td>${catL(a.cat)}</td>
+    <td style="color:var(--accent2)">⬇️ ${a.downloadCount||0}</td>
+    <td>${st(a.status||'approved')}</td>
+    <td><div class="acns"><button class="btn btn-e" onclick="openEdit('${a.id}')">✏️</button><button class="btn btn-d" onclick="delApp('${a.id}','${a.name}')">🗑️</button></div></td>
+  </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">কোনো অ্যাপ নেই</td></tr>';
+}
+
+// APPS
+let appsQ='';
+window.rApps = () => { appsQ=(document.getElementById('s-apps')||{value:''}).value.toLowerCase(); _rApps(); };
+function _rApps(){
+  const list = appsQ ? A.apps.filter(a=>(a.name||'').toLowerCase().includes(appsQ)||(a.dev||'').toLowerCase().includes(appsQ)) : A.apps;
+  document.getElementById('cnt-apps').textContent=list.length;
+  document.getElementById('tbl-apps').innerHTML = list.length ? list.map(a=>`<tr>
+    <td><div class="ac">${ico(a)}<div><div class="an">${a.name}</div><div class="as">${a.dev||'—'}</div></div></div></td>
+    <td>${catL(a.cat)}</td>
+    <td>${a.downloadCount||0}</td>
+    <td>⭐ ${a.rating||'—'}</td>
+    <td>${a.starCount||0}(${a.starTotal||0})</td>
+    <td>${a.featured?sb('bo','⭐ হ্যাঁ'):'—'}</td>
+    <td>${a.isNew?sb('bg','🆕 হ্যাঁ'):'—'}</td>
+    <td>${st(a.status||'approved')}</td>
+    <td><div class="acns">
+      <button class="btn btn-e" onclick="openEdit('${a.id}')">✏️</button>
+      <button class="btn ${a.featured?'btn-r':'btn-a'}" onclick="togFeat('${a.id}',${!!a.featured})">${a.featured?'★':'⭐'}</button>
+      <button class="btn btn-d" onclick="delApp('${a.id}','${a.name}')">🗑️</button>
+    </div></td>
+  </tr>`).join('') : '<tr><td colspan="9" style="text-align:center;padding:20px;color:var(--muted);">কোনো অ্যাপ নেই</td></tr>';
+}
+
+function rFeat(){
+  const list=A.apps.filter(a=>a.featured);
+  document.getElementById('cnt-feat').textContent=list.length;
+  document.getElementById('tbl-feat').innerHTML = list.length ? list.map(a=>`<tr>
+    <td><div class="ac">${ico(a)}<div class="an">${a.name}</div></div></td>
+    <td>${catL(a.cat)}</td>
+    <td>${a.earn||'—'}</td>
+    <td>⬇️ ${a.downloadCount||0}</td>
+    <td><div class="acns">
+      <button class="btn btn-e" onclick="openEdit('${a.id}')">✏️</button>
+      <button class="btn btn-r" onclick="togFeat('${a.id}',true)">★ সরাও</button>
+    </div></td>
+  </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">কোনো ফিচার্ড অ্যাপ নেই</td></tr>';
+}
+
+function rPend(){
+  const list=A.apps.filter(a=>a.status==='pending');
+  document.getElementById('cnt-pend').textContent=list.length;
+  document.getElementById('tbl-pend').innerHTML = list.length ? list.map(a=>`<tr>
+    <td><div class="ac">${ico(a)}<div><div class="an">${a.name}</div><div class="as">${(a.desc||'').slice(0,35)}...</div></div></div></td>
+    <td>${a.devName||a.dev||'—'}</td>
+    <td style="font-size:11px;color:var(--muted)">${a.devEmail||'—'}</td>
+    <td>${a.uploadType==='premium'?sb('bp','👑 Premium'):sb('bg','🆓 Free')}</td>
+    <td>${ta(a.submittedAt)}</td>
+    <td><div class="acns">
+      <button class="btn btn-a" onclick="appApp('${a.id}')">✅ অনুমোদন</button>
+      <button class="btn btn-r" onclick="rejApp('${a.id}','${a.name}')">❌ বাতিল</button>
+      <button class="btn btn-e" onclick="openEdit('${a.id}')">✏️</button>
+    </div></td>
+  </tr>`).join('') : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--green);">✅ কোনো পেন্ডিং অ্যাপ নেই</td></tr>';
+}
+
+function rDevsAll(){
+  let df=(document.getElementById('s-devs')||{value:''}).value.toLowerCase();
+  let devs=df?A.devs.filter(d=>(d.name||'').toLowerCase().includes(df)||(d.email||'').toLowerCase().includes(df)):A.devs;
+  document.getElementById('cnt-devs').textContent=devs.length;
+  document.getElementById('tbl-devs').innerHTML = devs.length ? devs.map(d=>`<tr>
+    <td><div class="an">${d.name||'—'}</div></td>
+    <td style="font-size:11px;color:var(--muted)">${d.email||'—'}</td>
+    <td>${d.followers||0}</td>
+    <td>${d.monoEligible?sb('bg','✅ চালু'):sb('br','না')}</td>
+    <td>${d.subscribed?sb('bp','👑 হ্যাঁ'):'—'}</td>
+    <td style="color:var(--gold)">৳${d.totalEarning||0}</td>
+    <td><div class="acns">
+      <button class="btn ${d.monoEligible?'btn-r':'btn-a'}" onclick="togMono('${d.id}',${!!d.monoEligible})">${d.monoEligible?'🔒 বন্ধ':'💰 চালু'}</button>
+      <button class="btn ${d.subscribed?'btn-r':'btn-a'}" onclick="togSub('${d.id}',${!!d.subscribed})">${d.subscribed?'👑 সাব বাতিল':'👑 সাব দিন'}</button>
+      <button class="btn btn-d" onclick="delDev('${d.id}','${d.name||d.email}')">🗑️</button>
+    </div></td>
+  </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">কোনো ডেভেলপার নেই</td></tr>';
+  // Dev Apps
+  const devApps=A.apps.filter(a=>a.devUid||a.devEmail||a.dev);
+  document.getElementById('tbl-devapps').innerHTML = devApps.length ? devApps.map(a=>`<tr>
+    <td><div class="ac">${ico(a)}<div class="an">${a.name}</div></div></td>
+    <td>${a.devName||a.dev||'—'}</td>
+    <td style="font-size:11px;color:var(--muted)">${a.devEmail||'—'}</td>
+    <td>⬇️ ${a.downloadCount||0}</td>
+    <td>⭐ ${a.starCount||0}</td>
+    <td style="color:var(--gold)">৳${Math.floor((a.downloadCount||0)/1000)*200}</td>
+    <td>${a.uploadType==='premium'?sb('bp','👑 Premium'):sb('bg','🆓 Free')}</td>
+    <td><div class="acns">
+      <button class="btn btn-e" onclick="openEdit('${a.id}')">✏️</button>
+      <button class="btn btn-d" onclick="delApp('${a.id}','${a.name}')">🗑️</button>
+    </div></td>
+  </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">কোনো অ্যাপ নেই</td></tr>';
+}
+window.rDevs = () => rDevsAll();
+
+function rFollows(){
+  document.getElementById('cnt-follows').textContent=A.follows.length;
+  document.getElementById('tbl-follows').innerHTML = A.follows.length ? A.follows.map(f=>`<tr>
+    <td style="font-size:11px;color:var(--muted)">${(f.userId||f.id||'—').slice(0,16)}...</td>
+    <td style="font-size:11px;color:var(--muted)">${(f.devUid||'—').slice(0,16)}...</td>
+    <td>${ta(f.at)}</td>
+    <td><button class="btn btn-d" onclick="delFollow('${f.id}')">🗑️</button></td>
+  </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">কোনো ফলো নেই</td></tr>';
+}
+
+function rWd(){
+  const pend=A.wd.filter(x=>x.status==='pending');
+  const rest=A.wd.filter(x=>x.status!=='pending');
+  const all=[...pend,...rest];
+  document.getElementById('cnt-wd').textContent=pend.length;
+  document.getElementById('tbl-wd').innerHTML = all.length ? all.map(w=>`<tr>
+    <td><div class="an">${w.devName||'—'}</div><div class="as">${w.devEmail||''}</div></td>
+    <td>${(w.method||'—').toUpperCase()}</td>
+    <td><code style="font-size:11px;color:var(--accent)">${w.number||'—'}</code></td>
+    <td style="color:var(--gold);font-weight:700">৳${w.amount||0}</td>
+    <td>${w.currency||'BDT'}${w.amountUSD?` <span style="font-size:10px;color:var(--muted);">($${w.amountUSD})</span>`:''}</td>
+    <td>${st(w.status)}</td>
+    <td>${ta(w.requestedAt)}</td>
+    <td><div class="acns">
+      ${w.status==='pending'?`<button class="btn btn-a" onclick="apWd('${w.id}')">✅</button><button class="btn btn-r" onclick="rejWd('${w.id}')">❌</button>`:'<span style="color:var(--muted);font-size:10px;">সম্পন্ন</span>'}
+      <button class="btn btn-d" onclick="delWd('${w.id}')">🗑️</button>
+    </div></td>
+  </tr>`).join('') : '<tr><td colspan="8" style="text-align:center;padding:20px;color:var(--muted);">কোনো রিকোয়েস্ট নেই</td></tr>';
+}
+
+function rSub(){
+  const pend=A.subs.filter(x=>x.status==='pending');
+  const rest=A.subs.filter(x=>x.status!=='pending');
+  const all=[...pend,...rest];
+  document.getElementById('cnt-sub').textContent=pend.length;
+  document.getElementById('tbl-sub').innerHTML = all.length ? all.map(s=>`<tr>
+    <td><div class="an">${s.devName||'—'}</div><div class="as">${s.devEmail||''}</div></td>
+    <td>${(s.payMethod||'—').toUpperCase()}</td>
+    <td><code style="font-size:11px;color:var(--accent2)">${s.trxId||'—'}</code></td>
+    <td style="color:var(--gold);font-weight:700">৳${s.amount||0}</td>
+    <td>${st(s.status)}</td>
+    <td>${ta(s.requestedAt)}</td>
+    <td><div class="acns">
+      ${s.status==='pending'?`<button class="btn btn-a" onclick="apSub('${s.id}','${s.devUid||''}')">✅ অনুমোদন</button><button class="btn btn-r" onclick="rejSub('${s.id}')">❌</button>`:'<span style="color:var(--muted);font-size:10px;">সম্পন্ন</span>'}
+      <button class="btn btn-d" onclick="delSub('${s.id}')">🗑️</button>
+    </div></td>
+  </tr>`).join('') : '<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--muted);">কোনো রিকোয়েস্ট নেই</td></tr>';
+}
+
+function rMono(){
+  document.getElementById('cnt-mono').textContent=A.monos.length;
+  document.getElementById('tbl-mono').innerHTML = A.monos.length ? A.monos.map(m=>`<tr>
+    <td><div class="an">${m.devName||'—'}</div><div class="as">${m.devEmail||''}</div></td>
+    <td>${m.realName||'—'}</td>
+    <td>${m.whatsapp||'—'}</td>
+    <td>${catL(m.category)}</td>
+    <td>${st(m.status)}</td>
+    <td><div class="acns">
+      ${m.status!=='approved'?`<button class="btn btn-a" onclick="apMono('${m.id}','${m.devUid||''}')">✅</button>`:''}
+      ${m.status!=='rejected'?`<button class="btn btn-r" onclick="rejMono('${m.id}','${m.devUid||''}')">❌</button>`:''}
+      <button class="btn btn-d" onclick="delMono('${m.id}')">🗑️</button>
+    </div></td>
+  </tr>`).join('') : '<tr><td colspan="6" style="text-align:center;padding:20px;color:var(--muted);">কোনো রিকোয়েস্ট নেই</td></tr>';
+}
+
+let cmtsQ='';
+window.rCmts = () => { cmtsQ=(document.getElementById('s-cmts')||{value:''}).value.toLowerCase(); _rCmts(); };
+function _rCmts(){
+  const list = cmtsQ ? A.cmts.filter(c=>(c.text||'').toLowerCase().includes(cmtsQ)||(c.userName||'').toLowerCase().includes(cmtsQ)) : A.cmts;
+  document.getElementById('cnt-cmts').textContent=list.length;
+  document.getElementById('tbl-cmts').innerHTML = list.length ? list.map(c=>`<tr>
+    <td>${c.userName||'—'}</td>
+    <td style="max-width:250px;word-break:break-word;">${(c.text||'').slice(0,80)}${(c.text||'').length>80?'...':''}</td>
+    <td style="font-size:11px;color:var(--muted)">${(c.appId||'—').slice(0,8)}...</td>
+    <td>${ta(c.at)}</td>
+    <td><button class="btn btn-d" onclick="delCmt('${c.id}')">🗑️</button></td>
+  </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">কোনো মন্তব্য নেই</td></tr>';
+}
+
+function rRats(){
+  document.getElementById('cnt-rats').textContent=A.rats.length;
+  document.getElementById('tbl-rats').innerHTML = A.rats.length ? A.rats.map(r=>`<tr>
+    <td style="font-size:11px;color:var(--muted)">${(r.userId||r.id||'—').slice(0,16)}...</td>
+    <td style="font-size:11px;color:var(--muted)">${(r.appId||'—').slice(0,8)}...</td>
+    <td><span style="color:var(--gold)">${'★'.repeat(r.value||0)}${'☆'.repeat(5-(r.value||0))}</span> ${r.value||0}/5</td>
+    <td>${ta(r.at)}</td>
+    <td><button class="btn btn-d" onclick="delRat('${r.id}')">🗑️</button></td>
+  </tr>`).join('') : '<tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);">কোনো রেটিং নেই</td></tr>';
+}
+
+function rNotif(){
+  const sorted=[...A.apps].sort((a,b)=>{ const ta_=a.submittedAt?.toMillis?.()|| a.updateTime||0, tb_=b.submittedAt?.toMillis?.()|| b.updateTime||0; return tb_-ta_; }).slice(0,30);
+  document.getElementById('tbl-notif').innerHTML = sorted.length ? sorted.map(a=>`<tr>
+    <td><div class="ac">${ico(a)}<div class="an">${a.name}</div></div></td>
+    <td>${a.devName||a.dev||'—'}</td>
+    <td>${ta(a.submittedAt||a.updateTime)}</td>
+    <td>${a.isNew?sb('bg','🆕 নতুন'):sb('bb','📦 আপডেট')}</td>
+  </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);">কোনো ডেটা নেই</td></tr>';
+}
+
+// ══════════════════════════
+// ACTIONS
+// ══════════════════════════
+
+// APP ACTIONS
+window.togFeat = async(id,cur)=>{ await updateDoc(doc(db,'apps',id),{featured:!cur}); toast(cur?'★ ফিচার্ড থেকে সরানো হয়েছে':'⭐ ফিচার্ড করা হয়েছে!'); };
+window.appApp  = async(id)=>{ await updateDoc(doc(db,'apps',id),{status:'approved'}); toast('✅ অ্যাপ অনুমোদিত!'); };
+window.rejApp  = (id,name)=>cfm('❌','অ্যাপ বাতিল',`"${name}" বাতিল করবেন?`,async()=>{ await updateDoc(doc(db,'apps',id),{status:'rejected'}); toast('❌ বাতিল করা হয়েছে','var(--red)'); });
+window.delApp  = (id,name)=>cfm('🗑️','অ্যাপ মুছুন',`"${name}" সম্পূর্ণ মুছবেন?`,async()=>{ await deleteDoc(doc(db,'apps',id)); toast('🗑️ মুছে ফেলা হয়েছে','var(--red)'); });
+
+// DEV ACTIONS
+window.togMono = async(id,cur)=>{ await updateDoc(doc(db,'developers',id),{monoEligible:!cur}); toast(cur?'🔒 মনিটাইজ বন্ধ':'💰 মনিটাইজ চালু!'); };
+window.togSub  = async(id,cur)=>{ await updateDoc(doc(db,'developers',id),{subscribed:!cur}); toast(cur?'সাবস্ক্রিপশন বাতিল':'👑 সাবস্ক্রিপশন দেওয়া হয়েছে!'); };
+window.delDev  = (id,name)=>cfm('🗑️','Dev রেকর্ড মুছুন',`"${name}"-এর রেকর্ড মুছবেন?`,async()=>{ await deleteDoc(doc(db,'developers',id)); toast('🗑️ মুছে ফেলা হয়েছে','var(--red)'); });
+
+// FOLLOWS
+window.delFollow = async(id)=>{ await deleteDoc(doc(db,'follows',id)); toast('🗑️ ফলো মুছে ফেলা হয়েছে','var(--red)'); };
+
+// WITHDRAWALS
+window.apWd  = async(id)=>{ await updateDoc(doc(db,'withdrawals',id),{status:'approved',approvedAt:serverTimestamp()}); toast('✅ উইথড্র অনুমোদিত!'); };
+window.rejWd = async(id)=>{ await updateDoc(doc(db,'withdrawals',id),{status:'rejected'}); toast('❌ উইথড্র বাতিল','var(--red)'); };
+window.delWd = (id)=>cfm('🗑️','উইথড্র মুছুন','এই রেকর্ড মুছবেন?',async()=>{ await deleteDoc(doc(db,'withdrawals',id)); toast('🗑️ মুছে ফেলা হয়েছে','var(--red)'); });
+
+// SUBS
+window.apSub  = async(id,devUid)=>{ await updateDoc(doc(db,'subscription_requests',id),{status:'approved',approvedAt:serverTimestamp()}); if(devUid){try{await updateDoc(doc(db,'developers',devUid),{subscribed:true});}catch(e){}} toast('✅ সাবস্ক্রিপশন অনুমোদিত!'); };
+window.rejSub = async(id)=>{ await updateDoc(doc(db,'subscription_requests',id),{status:'rejected'}); toast('❌ বাতিল','var(--red)'); };
+window.delSub = (id)=>cfm('🗑️','রিকোয়েস্ট মুছুন','মুছবেন?',async()=>{ await deleteDoc(doc(db,'subscription_requests',id)); toast('🗑️ মুছে ফেলা হয়েছে','var(--red)'); });
+
+// MONO
+window.apMono  = async(id,devUid)=>{ await updateDoc(doc(db,'monetize_requests',id),{status:'approved'}); if(devUid){try{await updateDoc(doc(db,'developers',devUid),{monoEligible:true,monoApplied:true});}catch(e){}} toast('💰 মনিটাইজ চালু!'); };
+window.rejMono = async(id,devUid)=>{ await updateDoc(doc(db,'monetize_requests',id),{status:'rejected'}); if(devUid){try{await updateDoc(doc(db,'developers',devUid),{monoEligible:false});}catch(e){}} toast('❌ মনিটাইজ বন্ধ','var(--red)'); };
+window.delMono = (id)=>cfm('🗑️','মুছুন','মুছবেন?',async()=>{ await deleteDoc(doc(db,'monetize_requests',id)); toast('🗑️ মুছে ফেলা হয়েছে','var(--red)'); });
+
+// COMMENTS
+window.delCmt = (id)=>cfm('🗑️','মন্তব্য মুছুন','মুছবেন?',async()=>{ await deleteDoc(doc(db,'comments',id)); toast('🗑️ মন্তব্য মুছে ফেলা হয়েছে','var(--red)'); });
+window.deleteAllComments = ()=>cfm('⚠️','সব মন্তব্য মুছুন',`${A.cmts.length}টি মন্তব্য মুছে ফেলবেন?`,async()=>{ await Promise.all(A.cmts.map(c=>deleteDoc(doc(db,'comments',c.id)))); toast('🗑️ সব মুছে ফেলা হয়েছে','var(--red)'); });
+
+// RATINGS
+window.delRat = (id)=>cfm('🗑️','রেটিং মুছুন','মুছবেন?',async()=>{ await deleteDoc(doc(db,'ratings',id)); toast('🗑️ রেটিং মুছে ফেলা হয়েছে','var(--red)'); });
+window.deleteAllRatings = ()=>cfm('⚠️','সব রেটিং মুছুন',`${A.rats.length}টি রেটিং মুছবেন?`,async()=>{ await Promise.all(A.rats.map(r=>deleteDoc(doc(db,'ratings',r.id)))); toast('🗑️ সব রেটিং মুছে ফেলা হয়েছে','var(--red)'); });
+
+// FOLLOWS BULK
+window.deleteAllFollows = ()=>cfm('⚠️','সব ফলো মুছুন',`${A.follows.length}টি ফলো মুছবেন?`,async()=>{ await Promise.all(A.follows.map(f=>deleteDoc(doc(db,'follows',f.id)))); toast('🗑️ সব ফলো মুছে ফেলা হয়েছে','var(--red)'); });
+
+// BULK APPS
+window.bulkNew = (v)=>cfm(v?'🆕':'🔄',v?'নতুন ব্যাজ দিন':'নতুন ব্যাজ সরান',`${A.apps.length}টি অ্যাপে করবেন?`,async()=>{ await Promise.all(A.apps.map(a=>updateDoc(doc(db,'apps',a.id),{isNew:v}))); toast(v?'🆕 সব অ্যাপে নতুন ব্যাজ!':'🔄 সব ব্যাজ সরানো হয়েছে'); });
+window.bulkApproveAll = ()=>cfm('✅','সব পেন্ডিং অনুমোদন','সব পেন্ডিং অ্যাপ অনুমোদন করবেন?',async()=>{ const pend=A.apps.filter(a=>a.status==='pending'); await Promise.all(pend.map(a=>updateDoc(doc(db,'apps',a.id),{status:'approved'}))); toast(`✅ ${pend.length}টি অ্যাপ অনুমোদিত!`); });
+window.deleteAllApps = ()=>cfm('⚠️','সব অ্যাপ মুছুন',`⚠️ ${A.apps.length}টি অ্যাপ সম্পূর্ণ মুছে ফেলবেন? পূর্বাবস্থায় ফেরানো যাবে না!`,async()=>{ await Promise.all(A.apps.map(a=>deleteDoc(doc(db,'apps',a.id)))); toast('🗑️ সব অ্যাপ মুছে ফেলা হয়েছে','var(--red)'); });
+window.approveAllWithdraw = ()=>cfm('✅','সব উইথড্র অনুমোদন','সব পেন্ডিং উইথড্র অনুমোদন করবেন?',async()=>{ const pend=A.wd.filter(x=>x.status==='pending'); await Promise.all(pend.map(x=>updateDoc(doc(db,'withdrawals',x.id),{status:'approved',approvedAt:serverTimestamp()}))); toast(`✅ ${pend.length}টি উইথড্র অনুমোদিত!`); });
+window.rejectAllWithdraw = ()=>cfm('❌','সব উইথড্র বাতিল','সব পেন্ডিং উইথড্র বাতিল করবেন?',async()=>{ const pend=A.wd.filter(x=>x.status==='pending'); await Promise.all(pend.map(x=>updateDoc(doc(db,'withdrawals',x.id),{status:'rejected'}))); toast(`❌ ${pend.length}টি বাতিল করা হয়েছে`,'var(--red)'); });
+window.approveAllSubs = ()=>cfm('✅','সব সাবস্ক্রিপশন অনুমোদন','সব পেন্ডিং সাবস্ক্রিপশন অনুমোদন করবেন?',async()=>{ const pend=A.subs.filter(x=>x.status==='pending'); await Promise.all(pend.map(async x=>{ await updateDoc(doc(db,'subscription_requests',x.id),{status:'approved',approvedAt:serverTimestamp()}); if(x.devUid){try{await updateDoc(doc(db,'developers',x.devUid),{subscribed:true});}catch(e){}} })); toast(`✅ ${pend.length}টি সাবস্ক্রিপশন অনুমোদিত!`); });
+window.rejectAllSubs = ()=>cfm('❌','সব সাবস্ক্রিপশন বাতিল','সব পেন্ডিং সাবস্ক্রিপশন বাতিল করবেন?',async()=>{ const pend=A.subs.filter(x=>x.status==='pending'); await Promise.all(pend.map(x=>updateDoc(doc(db,'subscription_requests',x.id),{status:'rejected'}))); toast(`❌ ${pend.length}টি বাতিল`,'var(--red)'); });
+
+// ADD APP
+window.doAddApp = async()=>{
+  const ge=id=>document.getElementById(id).value.trim();
+  const n=ge('na-name'), d=ge('na-desc'), l=ge('na-dl');
+  const se=(m)=>{document.getElementById('na-err').textContent=m; document.getElementById('na-err').style.display=m?'':'none';};
+  const so=(m)=>{document.getElementById('na-ok').textContent=m; document.getElementById('na-ok').style.display=m?'':'none';};
+  se(''); so('');
+  if(!n||!d||!l){se('❌ নাম, বিবরণ ও ডাউনলোড লিংক আবশ্যিক'); return;}
+  try{
+    const tv=ge('na-time');
+    await addDoc(collection(db,'apps'),{
+      name:n, desc:d, dl:l,
+      dev:ge('na-dev')||'EarnZone BD',
+      cat:document.getElementById('na-cat').value,
+      earn:ge('na-earn')||'—',
+      iconUrl:ge('na-icon'), icon:ge('na-icon')?'':'📱', iconBg:'var(--card)',
+      rating:parseFloat(document.getElementById('na-rating').value)||4.0,
+      size:ge('na-size')||'—',
+      version:ge('na-ver')||'1.0',
+      ss1:ge('na-ss1'), ss2:ge('na-ss2'), ss3:ge('na-ss3'),
+      featured:document.getElementById('na-feat').checked,
+      isNew:document.getElementById('na-new').checked,
+      downloadCount:0, starCount:0, starTotal:0, follows:0, dls:'0+',
+      status:'approved', uploadType:'premium',
+      updateTime: tv?new Date(tv).getTime():Date.now(),
+      submittedAt:serverTimestamp()
+    });
+    so('✅ অ্যাপ লাইভ হয়েছে!'); toast('🚀 অ্যাপ যোগ হয়েছে!');
+    ['na-name','na-desc','na-dl','na-dev','na-earn','na-icon','na-size','na-ver','na-ss1','na-ss2','na-ss3'].forEach(id=>document.getElementById(id).value='');
+  }catch(e){se('❌ '+e.message);}
+};
+
+// EDIT APP
+window.openEdit = (id)=>{
+  const a=A.apps.find(x=>x.id===id); if(!a) return;
+  const sv=(eid,v)=>document.getElementById(eid).value=v||'';
+  sv('e-id',id); sv('e-name',a.name); sv('e-dev',a.dev); sv('e-desc',a.desc);
+  document.getElementById('e-cat').value=a.cat||'earn';
+  sv('e-earn',a.earn); sv('e-dl',a.dl); sv('e-icon',a.iconUrl);
+  sv('e-rating',a.rating||4.0); sv('e-size',a.size); sv('e-ver',a.version);
+  sv('e-dl2',a.downloadCount||0); sv('e-sc',a.starCount||0); sv('e-st',a.starTotal||0);
+  sv('e-follows',a.follows||0);
+  sv('e-ss1',a.ss1); sv('e-ss2',a.ss2); sv('e-ss3',a.ss3);
+  document.getElementById('e-feat').checked=!!a.featured;
+  document.getElementById('e-new').checked=!!a.isNew;
+  document.getElementById('e-status').value=a.status||'approved';
+  document.getElementById('e-uptype').value=a.uploadType||'free';
+  document.getElementById('e-err').style.display='none';
+  ov('editOv');
+};
+window.doEdit = async()=>{
+  const ge=id=>document.getElementById(id).value.trim();
+  const id=ge('e-id'); const n=ge('e-name'); const d=ge('e-desc'); const l=ge('e-dl');
+  if(!n||!d||!l){document.getElementById('e-err').textContent='❌ নাম, বিবরণ ও লিংক আবশ্যিক'; document.getElementById('e-err').style.display=''; return;}
+  try{
+    await updateDoc(doc(db,'apps',id),{
+      name:n, desc:d, dl:l, dev:ge('e-dev'), cat:document.getElementById('e-cat').value,
+      earn:ge('e-earn'), iconUrl:ge('e-icon'), rating:parseFloat(ge('e-rating'))||4.0,
+      size:ge('e-size'), version:ge('e-ver'),
+      downloadCount:parseInt(ge('e-dl2'))||0, starCount:parseInt(ge('e-sc'))||0,
+      starTotal:parseInt(ge('e-st'))||0, follows:parseInt(ge('e-follows'))||0,
+      ss1:ge('e-ss1'), ss2:ge('e-ss2'), ss3:ge('e-ss3'),
+      featured:document.getElementById('e-feat').checked,
+      isNew:document.getElementById('e-new').checked,
+      status:document.getElementById('e-status').value,
+      uploadType:document.getElementById('e-uptype').value,
+      updateTime:Date.now()
+    });
+    cov('editOv'); toast('✅ অ্যাপ আপডেট হয়েছে!');
+  }catch(e){document.getElementById('e-err').textContent='❌ '+e.message; document.getElementById('e-err').style.display='';}
+};
+
+// SETTINGS
+window.saveSettings = async()=>{
+  const ge=id=>document.getElementById(id).value.trim();
+  await setDoc(doc(db,'settings','site'),{
+    ticker:ge('s-ticker'),
+    heroBadge:ge('s-badge'),
+    heroSub:ge('s-sub'),
+    devLink:ge('s-devlink')
+  },{merge:true});
+  document.getElementById('s-ok').textContent='✅ সেটিংস সেভ হয়েছে!'; document.getElementById('s-ok').style.display='';
+  toast('✅ সাইট সেটিংস আপডেট!');
+  setTimeout(()=>document.getElementById('s-ok').style.display='none',3000);
+};
+window.saveHeroStats = async()=>{
+  const ge=id=>document.getElementById(id).value.trim();
+  await setDoc(doc(db,'settings','site'),{heroEarn:ge('h-earn'),heroTag:ge('h-tag')},{merge:true});
+  document.getElementById('h-ok').textContent='✅ আপডেট হয়েছে!'; document.getElementById('h-ok').style.display='';
+  toast('✅ হিরো Stats আপডেট!');
+  setTimeout(()=>document.getElementById('h-ok').style.display='none',3000);
+};
+
+// ══════════════════════════
+// BANNER SLIDER SYSTEM
+// ══════════════════════════
+let selectedBannerFile = null;
+
+// File select থেকে প্রিভিউ দেখাও
+window.onBnFileSelect = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  if (!file.type.startsWith('image/')) {
+    document.getElementById('bn-err').textContent = '❌ শুধু ছবি ফাইল সিলেক্ট করুন';
+    document.getElementById('bn-err').style.display = '';
+    return;
+  }
+  if (file.size > 5 * 1024 * 1024) {
+    document.getElementById('bn-err').textContent = '❌ ছবির সাইজ ৫MB এর বেশি না';
+    document.getElementById('bn-err').style.display = '';
+    return;
+  }
+  document.getElementById('bn-err').style.display = 'none';
+  selectedBannerFile = file;
+  const reader = new FileReader();
+  reader.onload = e => {
+    document.getElementById('bn-preview-img').src = e.target.result;
+    document.getElementById('bn-preview-wrap').style.display = '';
+    document.getElementById('bn-file-name').textContent = '✅ ' + file.name + ' (' + (file.size/1024).toFixed(0) + ' KB)';
+    document.getElementById('bn-submit-btn').disabled = false;
+    document.getElementById('bn-drop-icon').textContent = '✅';
+  };
+  reader.readAsDataURL(file);
+};
+
+function rBanners(){
+  const list = A.banners;
+  const cnt = document.getElementById('cnt-banners');
+  const el = document.getElementById('banner-list');
+  if(!cnt || !el) return;
+  cnt.textContent = list.length;
+  if(!list.length){
+    el.innerHTML='<div style="text-align:center;padding:30px;color:var(--muted);grid-column:1/-1;">কোনো ব্যানার নেই। উপরে ছবি আপলোড করুন।</div>';
+    return;
+  }
+  el.innerHTML = list.map(b=>`
+    <div style="background:var(--card);border:1px solid ${b.active!==false?'rgba(0,212,170,.3)':'var(--border)'};border-radius:12px;overflow:hidden;">
+      <div style="position:relative;width:100%;padding-top:56.25%;background:#000;">
+        <img src="${b.imageUrl}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.style.background='#1a2535'">
+        <div style="position:absolute;top:6px;right:6px;display:flex;gap:4px;z-index:2;">
+          <span style="background:${b.active!==false?'rgba(34,197,94,.9)':'rgba(239,68,68,.85)'};color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;">${b.active!==false?'✅ চালু':'❌ বন্ধ'}</span>
+          <span style="background:rgba(0,0,0,.7);color:var(--accent);font-size:10px;font-weight:700;padding:2px 7px;border-radius:8px;">#${b.order||'?'}</span>
+        </div>
+      </div>
+      <div style="padding:10px;">
+        ${b.caption?`<div style="font-size:12px;font-weight:600;margin-bottom:4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${b.caption}</div>`:'<div style="font-size:11px;color:var(--muted);margin-bottom:4px;">ক্যাপশন নেই</div>'}
+        ${b.link?`<div style="font-size:10px;color:var(--accent2);margin-bottom:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">🔗 ${b.link}</div>`:''}
+        <div style="display:flex;gap:6px;margin-top:6px;">
+          <button class="btn ${b.active!==false?'btn-r':'btn-a'}" style="flex:1;font-size:11px;" onclick="toggleBanner('${b.id}',${b.active!==false})">${b.active!==false?'🔴 বন্ধ':'🟢 চালু'}</button>
+          <button class="btn btn-d" onclick="deleteBanner('${b.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+window.addBanner = async()=>{
+  const caption = document.getElementById('bn-caption').value.trim();
+  const link = document.getElementById('bn-link').value.trim();
+  const order = parseInt(document.getElementById('bn-order').value)||1;
+  const active = document.getElementById('bn-active').value==='true';
+  const err = document.getElementById('bn-err');
+  const ok = document.getElementById('bn-ok');
+  const btn = document.getElementById('bn-submit-btn');
+  const prog = document.getElementById('bn-progress-wrap');
+  const bar = document.getElementById('bn-progress-bar');
+  const pct = document.getElementById('bn-progress-pct');
+  err.style.display='none'; ok.style.display='none';
+
+  if(!selectedBannerFile){ err.textContent='❌ আগে গ্যালারি থেকে ছবি সিলেক্ট করুন'; err.style.display=''; return; }
+
+  btn.disabled=true; btn.textContent='⏳ আপলোড হচ্ছে...';
+  prog.style.display='';
+  bar.style.width='10%'; pct.textContent='১০%';
+
+  try {
+    // Cloudinary তে আপলোড (unsigned)
+    const CLOUD_NAME = 'df6dg2rnp';
+    const UPLOAD_PRESET = 'ml_default';
+
+    const formData = new FormData();
+    formData.append('file', selectedBannerFile);
+    formData.append('upload_preset', UPLOAD_PRESET);
+    formData.append('folder', 'earnzone_banners');
+
+    bar.style.width='30%'; pct.textContent='৩০%';
+
+    const res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', {
+      method: 'POST',
+      body: formData
+    });
+
+    bar.style.width='80%'; pct.textContent='৮০%';
+
+    if (!res.ok) throw new Error('Cloudinary সার্ভার রেসপন্স করেনি (' + res.status + ')');
+    const json = await res.json();
+    if (!json.secure_url) throw new Error('Cloudinary আপলোড ব্যর্থ: ' + (json.error?.message||'অজানা ত্রুটি'));
+
+    const downloadURL = json.secure_url;
+    const publicId = json.public_id;
+
+    bar.style.width='95%'; pct.textContent='৯৫%';
+
+    await addDoc(collection(db,'banners'), {
+      imageUrl: downloadURL,
+      cloudinaryPublicId: publicId,
+      caption, link, order, active,
+      createdAt: serverTimestamp()
+    });
+
+    bar.style.width='100%'; pct.textContent='১০০% ✅';
+    ok.textContent='✅ ব্যানার সফলভাবে যোগ হয়েছে!'; ok.style.display='';
+    toast('🖼️ ব্যানার লাইভ হয়েছে!');
+
+    // Reset
+    selectedBannerFile = null;
+    document.getElementById('bn-file').value='';
+    document.getElementById('bn-caption').value='';
+    document.getElementById('bn-link').value='';
+    document.getElementById('bn-order').value='1';
+    document.getElementById('bn-preview-wrap').style.display='none';
+    document.getElementById('bn-drop-icon').textContent='📸';
+    setTimeout(()=>{ prog.style.display='none'; bar.style.width='0%'; pct.textContent='0%';
+      btn.disabled=true; btn.textContent='📸 ছবি আপলোড করুন'; ok.style.display='none'; }, 2000);
+
+  } catch(e) {
+    bar.style.width='0%'; pct.textContent='0%';
+    err.textContent='❌ ' + e.message; err.style.display='';
+    btn.disabled=false; btn.textContent='📸 আবার চেষ্টা করুন';
+    prog.style.display='none';
+  }
+};
+
+window.toggleBanner = async(id, isActive)=>{
+  await updateDoc(doc(db,'banners',id),{active:!isActive});
+  toast(isActive?'🔴 ব্যানার বন্ধ হয়েছে':'🟢 ব্যানার চালু হয়েছে');
+};
+
+window.deleteBanner = (id)=>{
+  cfm('🗑️','ব্যানার মুছবেন?','এই ব্যানারটি Firestore থেকে মুছে যাবে।', async()=>{
+    await deleteDoc(doc(db,'banners',id));
+    toast('🗑️ ব্যানার মুছে গেছে','var(--red)');
+  });
+};
+
+window.deleteAllBanners = ()=>{
+  cfm('⚠️','সব ব্যানার মুছবেন?','সব ব্যানার মুছে যাবে!', async()=>{
+    await Promise.all(A.banners.map(async b=>{
+      await deleteDoc(doc(db,'banners',b.id));
+    }));
+    toast('🗑️ সব ব্যানার মুছে গেছে','var(--red)');
+  });
+};
+
+// ══════════════════════════════════════
+// গ্যালারি থেকে অ্যাপ লোগো আপলোড
+// ══════════════════════════════════════
+let selectedIconFile = null;
+
+window.onIconFileSelect = function(input) {
+  const file = input.files[0];
+  if (!file) return;
+  selectedIconFile = file;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    document.getElementById('icon-preview-img').src = e.target.result;
+    document.getElementById('icon-file-name').textContent = file.name + ' (' + (file.size/1024).toFixed(1) + ' KB)';
+    document.getElementById('icon-preview-wrap').style.display = 'flex';
+  };
+  reader.readAsDataURL(file);
+};
+
+window.clearIconPreview = function() {
+  selectedIconFile = null;
+  document.getElementById('na-icon-file').value = '';
+  document.getElementById('icon-preview-wrap').style.display = 'none';
+  document.getElementById('icon-preview-img').src = '';
+  document.getElementById('icon-upload-ok').style.display = 'none';
+  document.getElementById('na-icon').value = '';
+};
+
+async function uploadIconToCloudinary() {
+  if (!selectedIconFile) return null;
+  const prog = document.getElementById('icon-progress-wrap');
+  const bar = document.getElementById('icon-progress-bar');
+  const pct = document.getElementById('icon-progress-pct');
+  prog.style.display = '';
+  bar.style.width = '20%'; pct.textContent = '20%';
+  const formData = new FormData();
+  formData.append('file', selectedIconFile);
+  formData.append('upload_preset', 'earnzone_unsigned');
+  formData.append('folder', 'earnzone-logos');
+  try {
+    const res = await fetch('https://api.cloudinary.com/v1_1/earnzonebd/image/upload', { method:'POST', body:formData });
+    bar.style.width = '80%'; pct.textContent = '80%';
+    const data = await res.json();
+    if (data.secure_url) {
+      bar.style.width = '100%'; pct.textContent = '100%';
+      document.getElementById('icon-upload-ok').style.display = '';
+      document.getElementById('na-icon').value = data.secure_url;
+      setTimeout(()=>{ prog.style.display='none'; }, 1500);
+      return data.secure_url;
+    } else {
+      prog.style.display='none';
+      toast('❌ লোগো আপলোড ব্যর্থ','var(--red)');
+      return null;
+    }
+  } catch(e) {
+    prog.style.display='none';
+    toast('❌ এরর: '+e.message,'var(--red)');
+    return null;
+  }
+}
+
+const _origDoAddApp = window.doAddApp;
+window.doAddApp = async function() {
+  if (selectedIconFile) {
+    const url = await uploadIconToCloudinary();
+    if (!url) return;
+  }
+  if (_origDoAddApp) _origDoAddApp();
+};
+
+</script>
+</body>
+</html>
